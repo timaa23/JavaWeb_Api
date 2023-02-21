@@ -1,13 +1,17 @@
 package shop.controllers;
 
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import shop.dto.CategoryDTO;
+import shop.repositories.CategoryRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 public class HomeController {
+    private final CategoryRepository categoryRepository;
     private static List<CategoryDTO> list = new ArrayList<>() {
         {
             add(new CategoryDTO(1, "Кофти"));
@@ -15,7 +19,6 @@ public class HomeController {
             add(new CategoryDTO(2, "Футболки"));
         }
     };
-
     @GetMapping("/getAll")
     public List<CategoryDTO> getAll() {
         return list;
