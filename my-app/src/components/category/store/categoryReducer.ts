@@ -15,6 +15,11 @@ export const categoryReducer = (
         list: [...action.payload],
       };
     }
+    case CategoryActionTypes.CATEGORY_CREATE: {
+      return {
+        ...state,
+      };
+    }
     default:
       return state;
   }
