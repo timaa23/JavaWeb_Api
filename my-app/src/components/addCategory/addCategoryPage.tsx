@@ -51,7 +51,7 @@ const AddCategoryPage = () => {
               htmlFor="name"
               className="block text-sm font-semibold leading-6 text-gray-900"
             >
-              Назава
+              Назва
             </label>
             <div className="mt-2.5">
               <input

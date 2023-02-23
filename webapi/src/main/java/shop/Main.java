@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import shop.service.SeedServiceInterface;
 import shop.storage.StorageProperties;
 import shop.storage.StorageService;
 
@@ -17,10 +18,11 @@ public class Main {
     }
 
     @Bean
-    CommandLineRunner init(StorageService storageService) {
+    CommandLineRunner init(StorageService storageService, SeedServiceInterface seedService) {
         return (args -> {
             try {
                 storageService.init();
+                seedService.seedCategoryData();
             } catch (Exception ex) {
                 System.out.println("Exception------> " + ex.getMessage());
             }
