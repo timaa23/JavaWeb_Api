@@ -29,14 +29,11 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<CategoryEntity> createCategory(@RequestBody CreateCategoryDTO model) {
-
-        //Тут все працює, але я закоментував щоб перевірити додавання категорій на сайті
-
         String fileName = storageService.save(model.getImage());
         CategoryEntity category = new CategoryEntity();
         category.setName(model.getName());
         category.setDescription(model.getDescription());
-        category.setImage(fileName); //(fileName);
+        category.setImage(fileName);
 
         categoryRepository.save(category);
         return new ResponseEntity<>(category, HttpStatus.CREATED);
@@ -58,6 +55,9 @@ public class CategoryController {
             CategoryEntity category = categoryData.get();
             category.setName(model.getName());
             category.setName(model.getDescription());
+
+            //Видаляємо старе та записуємо нове фото
+            storageService.remove(category.getImage());
             category.setImage(fileName);
 
             CategoryEntity updatedCategory = categoryRepository.save(category);
