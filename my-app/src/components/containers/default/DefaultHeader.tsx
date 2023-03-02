@@ -114,7 +114,7 @@ const DefaultHeader = () => {
             </Link>
           </div>
           <Link
-            to="/add"
+            to="/category/create"
             className="text-base font-medium text-gray-500 hover:text-gray-900"
           >
             Додати категорію

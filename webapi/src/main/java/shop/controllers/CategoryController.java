@@ -1,79 +1,62 @@
 package shop.controllers;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import shop.dto.UploadImageDTO;
+import shop.dto.category.CategoryItemDTO;
 import shop.dto.category.CreateCategoryDTO;
 import shop.dto.category.UpdateCategoryDTO;
-import shop.entities.CategoryEntity;
-import shop.repositories.CategoryRepository;
-import shop.storage.StorageService;
+import shop.interfaces.ICategoryService;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
 @RequestMapping("api/categories")
 public class CategoryController {
-    private final CategoryRepository categoryRepository;
-    private final StorageService storageService;
+    private final ICategoryService categoryService;
 
     @GetMapping
-    public ResponseEntity<List<CategoryEntity>> getAllCategories() {
-        List<CategoryEntity> categories = categoryRepository.findAll();
-        return new ResponseEntity<>(categories, HttpStatus.OK);
-    }
+    public ResponseEntity<List<CategoryItemDTO>> getAllCategories() {
+        var model = categoryService.getAll();
 
-    @PostMapping
-    public ResponseEntity<CategoryEntity> createCategory(@RequestBody CreateCategoryDTO model) {
-        String fileName = storageService.save(model.getImage());
-        CategoryEntity category = new CategoryEntity();
-        category.setName(model.getName());
-        category.setDescription(model.getDescription());
-        category.setImage(fileName);
-
-        categoryRepository.save(category);
-        return new ResponseEntity<>(category, HttpStatus.CREATED);
+        return new ResponseEntity<>(model, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryEntity> getCategoryById(@PathVariable("id") int id) {
-        Optional<CategoryEntity> category = categoryRepository.findById(id);
-        return category.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<CategoryItemDTO> getCategoryById(@PathVariable("id") int id) {
+        try {
+            CategoryItemDTO category = categoryService.getById(id);
+            return new ResponseEntity<>(category, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<CategoryItemDTO> createCategory(@Valid @RequestBody CreateCategoryDTO model) {
+        var result = categoryService.create(model);
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CategoryEntity> updateCategory(@PathVariable("id") int id, @RequestBody UpdateCategoryDTO model) {
-        Optional<CategoryEntity> categoryData = categoryRepository.findById(id);
-        String fileName = storageService.save(model.getImage());
-
-        if (categoryData.isPresent()) {
-            CategoryEntity category = categoryData.get();
-            category.setName(model.getName());
-            category.setName(model.getDescription());
-
-            //Видаляємо старе та записуємо нове фото
-            storageService.remove(category.getImage());
-            category.setImage(fileName);
-
-            CategoryEntity updatedCategory = categoryRepository.save(category);
-            return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
-        } else {
+    public ResponseEntity<CategoryItemDTO> updateCategory(@PathVariable("id") int id, @RequestBody UpdateCategoryDTO model) {
+        try {
+            var update = categoryService.update(id, model);
+            return new ResponseEntity<>(update, HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println("Error-------> " + e.getMessage());
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteCategory(@PathVariable("id") int id) {
+    public ResponseEntity<List<CategoryItemDTO>> deleteCategory(@PathVariable("id") int id) {
         try {
-            Optional<CategoryEntity> category = categoryRepository.findById(id);
-            storageService.remove(category.get().getImage());
-            categoryRepository.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            var categoryListResult = categoryService.delete(id);
+            return new ResponseEntity<>(categoryListResult, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

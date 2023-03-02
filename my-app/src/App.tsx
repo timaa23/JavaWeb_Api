@@ -5,9 +5,10 @@ import { Route, Routes } from "react-router-dom";
 import DefaultLayout from "./components/containers/default";
 import Home from "./components/home";
 import NotFoundPage from "./components/notFound";
-import AddCategoryPage from "./components/addCategory";
+import AddCategoryPage from "./components/category/addCategory";
 import LoginPage from "./components/auth/login";
 import RegisterPage from "./components/auth/register";
+import ProductsPage from "./components/product";
 
 const App = () => {
   return (
@@ -18,7 +19,8 @@ const App = () => {
 
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
-          <Route path="add" element={<AddCategoryPage />} />
+          <Route path="products" element={<ProductsPage />} />
+          <Route path="category/create" element={<AddCategoryPage />} />
 
           <Route path="*" element={<NotFoundPage />} />
         </Route>

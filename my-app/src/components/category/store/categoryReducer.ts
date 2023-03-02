@@ -20,6 +20,12 @@ export const categoryReducer = (
         ...state,
       };
     }
+    case CategoryActionTypes.CATEGORY_DELETE: {
+      return {
+        ...state,
+        list: [...action.payload],
+      };
+    }
     default:
       return state;
   }

@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,4 +21,11 @@ public class CategoryEntity {
     private String name;
     private String image;
     private String description;
+
+    public CategoryEntity(int id) {
+        this.id = id;
+    }
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ProductEntity> products;
 }
