@@ -1,21 +1,24 @@
 package shop.controllers;
 
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import shop.dto.category.CategoryItemDTO;
+import org.springframework.web.multipart.MultipartFile;
 import shop.dto.UploadImageDTO;
 import shop.repositories.CategoryRepository;
 import shop.storage.StorageService;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 
 @RestController
 @AllArgsConstructor
@@ -39,6 +42,29 @@ public class HomeController {
         return storageService.save(dto.getBase64());
     }
 
+    @SneakyThrows
+    @PostMapping(value = "/test", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> test(@RequestParam("images") List<MultipartFile> multipartFiles) {
+
+        String fileNames = "Images added: \n";
+
+        for (MultipartFile file : multipartFiles) {
+            String base64 = getBase64FromMultipartFile(file);
+            fileNames += "\n" + storageService.save(base64);
+        }
+
+        return new ResponseEntity<>(fileNames, HttpStatus.OK);
+    }
+
+    @SneakyThrows
+    private String getBase64FromMultipartFile(MultipartFile multipartFile) {
+        byte[] bytes = multipartFile.getBytes();
+        byte[] encoded = Base64.encodeBase64(bytes, false);
+        String fileBase54 = new String(encoded);
+        String base64 = "data:" + multipartFile.getContentType() + ";base64," + fileBase54;
+
+        return base64;
+    }
 //    private static List<CategoryItemDTO> list = new ArrayList<>() {
 //        {
 //            add(new CategoryItemDTO(1, "Кофти"));

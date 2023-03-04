@@ -3,8 +3,6 @@ package shop.dto.productImage;
 import lombok.Data;
 
 @Data
-public class ProductImageItemDTO {
-    private int id;
+public class UpdateProductImageDTO {
     private String name;
-    private int productId;
 }

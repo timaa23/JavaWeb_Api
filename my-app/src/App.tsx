@@ -8,7 +8,8 @@ import NotFoundPage from "./components/notFound";
 import AddCategoryPage from "./components/category/addCategory";
 import LoginPage from "./components/auth/login";
 import RegisterPage from "./components/auth/register";
-import ProductsPage from "./components/product";
+import ProductListPage from "./components/product/ProductListPage";
+import ProductPage from "./components/product/ProductPage";
 
 const App = () => {
   return (
@@ -19,7 +20,8 @@ const App = () => {
 
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
-          <Route path="products" element={<ProductsPage />} />
+          <Route path="products" element={<ProductListPage />} />
+          <Route path="product" element={<ProductPage />} />
           <Route path="category/create" element={<AddCategoryPage />} />
 
           <Route path="*" element={<NotFoundPage />} />

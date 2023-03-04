@@ -25,16 +25,11 @@ const CategoryList = () => {
         payload: resp.data,
       });
     });
-    console.log(category_id);
   };
 
   const onClickhandle = (category_id: number) => {
-    http.get(`/api/products/byCategory/${category_id}`).then((resp) => {
-      console.log(resp.data);
-
-      const testString = qs.stringify({ categoryId: category_id });
-      navigate(`/products?` + testString);
-    });
+    const testString = qs.stringify({ categoryId: category_id });
+    navigate(`/products?` + testString);
   };
 
   return (

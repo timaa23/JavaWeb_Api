@@ -11,14 +11,14 @@ import shop.entities.ProductImageEntity;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-03-02T18:01:01+0200",
+    date = "2023-03-04T18:39:46+0200",
     comments = "version: 1.5.3.Final, compiler: javac, environment: Java 19.0.2 (Oracle Corporation)"
 )
 @Component
 public class ProductImageMapperImpl implements ProductImageMapper {
 
     @Override
-    public ProductImageItemDTO categoryItemDTOByCategory(ProductImageEntity productImage) {
+    public ProductImageItemDTO productImageItemDTOByProductImage(ProductImageEntity productImage) {
         if ( productImage == null ) {
             return null;
         }
@@ -26,32 +26,35 @@ public class ProductImageMapperImpl implements ProductImageMapper {
         ProductImageItemDTO productImageItemDTO = new ProductImageItemDTO();
 
         productImageItemDTO.setProductId( productImageProductId( productImage ) );
+        productImageItemDTO.setId( productImage.getId() );
         productImageItemDTO.setName( productImage.getName() );
 
         return productImageItemDTO;
     }
 
     @Override
-    public List<ProductImageItemDTO> categoryItemDTOsToCategories(List<ProductImageEntity> list) {
+    public List<ProductImageItemDTO> productImageItemDTOsToProductImages(List<ProductImageEntity> list) {
         if ( list == null ) {
             return null;
         }
 
         List<ProductImageItemDTO> list1 = new ArrayList<ProductImageItemDTO>( list.size() );
         for ( ProductImageEntity productImageEntity : list ) {
-            list1.add( categoryItemDTOByCategory( productImageEntity ) );
+            list1.add( productImageItemDTOByProductImage( productImageEntity ) );
         }
 
         return list1;
     }
 
     @Override
-    public ProductImageEntity productByCreateProductDTO(CreateProductImageDTO dto) {
+    public ProductImageEntity productImageByCreateProductImageDTO(CreateProductImageDTO dto) {
         if ( dto == null ) {
             return null;
         }
 
         ProductImageEntity productImageEntity = new ProductImageEntity();
+
+        productImageEntity.setName( dto.getName() );
 
         return productImageEntity;
     }

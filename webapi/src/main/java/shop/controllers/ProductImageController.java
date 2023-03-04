@@ -4,8 +4,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import shop.dto.product.ProductItemDTO;
+import shop.dto.product.UpdateProductDTO;
 import shop.dto.productImage.CreateProductImageDTO;
 import shop.dto.productImage.ProductImageItemDTO;
+import shop.dto.productImage.UpdateProductImageDTO;
 import shop.interfaces.IProductImageService;
 
 import java.util.List;
@@ -49,6 +52,17 @@ public class ProductImageController {
             var newImage = productImageService.create(model);
             return new ResponseEntity<>(newImage, HttpStatus.OK);
         } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductImageItemDTO> updateProduct(@PathVariable("id") int id, UpdateProductImageDTO model) {
+        try {
+            var product = productImageService.update(id, model);
+            return new ResponseEntity<>(product, HttpStatus.OK);
+        } catch (Exception ex) {
+            System.out.println("Error------>" + ex.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

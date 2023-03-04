@@ -9,6 +9,7 @@ import shop.dto.category.CreateCategoryDTO;
 import shop.dto.category.UpdateCategoryDTO;
 import shop.entities.CategoryEntity;
 import shop.interfaces.ICategoryService;
+import shop.interfaces.IProductService;
 import shop.mapper.CategoryMapper;
 import shop.repositories.CategoryRepository;
 import shop.storage.StorageService;
@@ -25,6 +26,8 @@ public class CategoryService implements ICategoryService {
     private final CategoryMapper categoryMapper;
     @Autowired
     private final StorageService storageService;
+    @Autowired
+    private final IProductService productService;
 
     @Override
     public List<CategoryItemDTO> getAll() {
@@ -56,17 +59,11 @@ public class CategoryService implements ICategoryService {
         Optional<CategoryEntity> categoryData = categoryRepository.findById(id);
         if (!categoryData.isPresent()) throw new Exception();
 
-
         CategoryEntity category = categoryData.get();
         category.setName(model.getName());
         category.setDescription(model.getDescription());
 
-        if (model.getImage() == "no_photo") {
-            System.out.println(model.getImage());
-            category.setImage(categoryData.get().getImage());
-        }
-        else {
-            System.out.println(model.getImage());
+        if (model.getImage() != "") {
             String fileName = storageService.save(model.getImage());
             //Видаляємо старе та записуємо нове фото
             storageService.removeFile(category.getImage());
@@ -82,8 +79,14 @@ public class CategoryService implements ICategoryService {
         Optional<CategoryEntity> category = categoryRepository.findById(id);
         if (!category.isPresent()) throw new Exception();
 
+        var listProducts = productService.getByCategoryId(id);
+        for (var item : listProducts) {
+            productService.delete(item.getId());
+        }
+
         storageService.removeFile(category.get().getImage());
         categoryRepository.deleteById(id);
+
         return getAll();
     }
 }

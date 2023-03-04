@@ -7,8 +7,10 @@ import org.springframework.stereotype.Service;
 import shop.dto.product.CreateProductDTO;
 import shop.dto.product.ProductItemDTO;
 import shop.dto.product.UpdateProductDTO;
+import shop.dto.productImage.CreateProductImageDTO;
 import shop.entities.CategoryEntity;
 import shop.entities.ProductEntity;
+import shop.interfaces.IProductImageService;
 import shop.interfaces.IProductService;
 import shop.mapper.ProductMapper;
 import shop.repositories.CategoryRepository;
@@ -28,6 +30,8 @@ public class ProductService implements IProductService {
     private final ProductMapper productMapper;
     @Autowired
     private final CategoryRepository categoryRepository;
+    @Autowired
+    private final IProductImageService productImageService;
 
     @Override
     public List<ProductItemDTO> getAll() {
@@ -66,6 +70,10 @@ public class ProductService implements IProductService {
         product.setCategory(new CategoryEntity(model.getCategoryId()));
 
         productRepository.save(product);
+
+        CreateProductImageDTO createProductImageDTO = new CreateProductImageDTO(model.getImage(), product.getId());
+        productImageService.create(createProductImageDTO);
+
         return productMapper.productItemDTOByProduct(product);
     }
 
@@ -89,6 +97,11 @@ public class ProductService implements IProductService {
     public void delete(int id) {
         Optional<ProductEntity> product = productRepository.findById(id);
         if (!product.isPresent()) throw new Exception();
+
+        var listImages = productImageService.getByProductId(id);
+        for (var item : listImages) {
+            productImageService.delete(item.getId());
+        }
 
         productRepository.deleteById(id);
     }

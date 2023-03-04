@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import shop.dto.product.UpdateProductDTO;
 import shop.dto.productImage.CreateProductImageDTO;
 import shop.dto.productImage.ProductImageItemDTO;
+import shop.dto.productImage.UpdateProductImageDTO;
 import shop.entities.ProductEntity;
 import shop.entities.ProductImageEntity;
 import shop.interfaces.IProductImageService;
@@ -16,6 +18,7 @@ import shop.storage.StorageService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -32,7 +35,7 @@ public class ProductImageService implements IProductImageService {
 
     @Override
     public List<ProductImageItemDTO> getAll() {
-        return productImageMapper.categoryItemDTOsToCategories(productImageRepository.findAll());
+        return productImageMapper.productImageItemDTOsToProductImages(productImageRepository.findAll());
     }
 
     @SneakyThrows
@@ -41,7 +44,7 @@ public class ProductImageService implements IProductImageService {
         var productImage = productImageRepository.findById(id);
         if (!productImage.isPresent()) throw new Exception();
 
-        return productImageMapper.categoryItemDTOByCategory(productImage.get());
+        return productImageMapper.productImageItemDTOByProductImage(productImage.get());
     }
 
     @SneakyThrows
@@ -57,21 +60,37 @@ public class ProductImageService implements IProductImageService {
             }
         }
 
-        return productImageMapper.categoryItemDTOsToCategories(imagesByProduct);
+        return productImageMapper.productImageItemDTOsToProductImages(imagesByProduct);
     }
 
     @SneakyThrows
     @Override
     public ProductImageItemDTO create(CreateProductImageDTO model) {
-        ProductImageEntity productImage = productImageMapper.productByCreateProductDTO(model);
+        ProductImageEntity productImage = productImageMapper.productImageByCreateProductImageDTO(model);
         productImage.setProduct(new ProductEntity(model.getProductId()));
 
-        String fileName = storageService.save(model.getImage());
+        String fileName = storageService.save(model.getName());
 
         productImage.setName(fileName);
 
         productImageRepository.save(productImage);
-        return productImageMapper.categoryItemDTOByCategory(productImage);
+        return productImageMapper.productImageItemDTOByProductImage(productImage);
+    }
+
+    @SneakyThrows
+    @Override
+    public ProductImageItemDTO update(int id, UpdateProductImageDTO model) {
+        Optional<ProductImageEntity> imageData = productImageRepository.findById(id);
+        if (!imageData.isPresent()) throw new Exception();
+
+        ProductImageEntity productImage = imageData.get();
+
+        String fileName = storageService.save(model.getName());
+        storageService.removeFile(productImage.getName());
+
+        productImage.setName(fileName);
+
+        return productImageMapper.productImageItemDTOByProductImage(productImageRepository.save(productImage));
     }
 
     @SneakyThrows

@@ -22,8 +22,6 @@ const AddCategoryPage = () => {
   });
 
   const onSubmitHandler = async (model: ICategoryCreate) => {
-    console.log("Submit server data:", model);
-
     try {
       const item = http.post("/api/categories", model).then((res) => {
         dispatch({
