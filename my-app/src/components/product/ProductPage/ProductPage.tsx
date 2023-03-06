@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { RadioGroup } from "@headlessui/react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import qs from "qs";
 import http from "../../../http_common";
-import { ProductActionTypes, ProductImageActionTypes } from "./store/types";
 import { useDispatch } from "react-redux";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
 import { Carousel } from "flowbite-react";
 import { IMAGES_FOLDER_VERY_HIGH } from "../../../constants/imgFolderPath";
+import { ProductActionTypes, ProductImageActionTypes } from "../store/types";
 
 const product = {
   name: "Basic Tee 6-Pack",
@@ -31,17 +31,11 @@ const product = {
 };
 const reviews = { href: "#", average: 4, totalCount: 117 };
 
-const photos = [
-  { src: "photo1.jpg", alt: "Photo 1" },
-  { src: "photo2.jpg", alt: "Photo 2" },
-  { src: "photo3.jpg", alt: "Photo 3" },
-  { src: "photo4.jpg", alt: "Photo 4" },
-];
-
 const ProductPage = () => {
   const [selectedSize, setSelectedSize] = useState(product.sizes[2]);
   const { _product } = useTypedSelector((store) => store.product);
   const { _images } = useTypedSelector((store) => store.productImages);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
 
@@ -64,6 +58,20 @@ const ProductPage = () => {
         });
       });
   }, []);
+
+  const onClickDeleteHandle = (id: number) => {
+    try {
+      http.delete(`api/products/${id}`).then(() => {
+        dispatch({
+          type: ProductActionTypes.PRODUCT_DELETE,
+        });
+      });
+      navigate("/");
+    } catch (error) {
+      console.log("Something went wrong, ", error);
+    }
+  };
+
   return (
     <div className="bg-white">
       <div className="pt-6">
@@ -273,6 +281,12 @@ const ProductPage = () => {
               >
                 Add to bag
               </button>
+              <button
+                onClick={() => onClickDeleteHandle(_product.id)}
+                className="mt-4 flex w-full items-center justify-center rounded-md border border-transparent bg-red-600 py-3 px-8 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+              >
+                Remove product
+              </button>
             </form>
           </div>
 
@@ -280,7 +294,6 @@ const ProductPage = () => {
             {/* Description and details */}
             <div>
               <h3 className="sr-only">Опис</h3>
-
               <div className="space-y-6">
                 <p className="text-base text-gray-900">
                   {_product.description}

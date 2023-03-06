@@ -35,7 +35,11 @@ public class ProductService implements IProductService {
 
     @Override
     public List<ProductItemDTO> getAll() {
-        return productMapper.productItemDTOsToProducts(productRepository.findAll());
+        var model = productMapper.productItemDTOsToProducts(productRepository.findAll());
+        for (var item : model) {
+            item.setPrimaryImage(productImageService.getByProductId(item.getId()).get(0).getName());
+        }
+        return model;
     }
 
     @SneakyThrows
@@ -44,7 +48,10 @@ public class ProductService implements IProductService {
         Optional<ProductEntity> product = productRepository.findById(id);
         if (!product.isPresent()) throw new Exception();
 
-        return productMapper.productItemDTOByProduct(product.get());
+        var model = productMapper.productItemDTOByProduct(product.get());
+        model.setPrimaryImage(productImageService.getByProductId(model.getId()).get(0).getName());
+
+        return model;
     }
 
     @SneakyThrows
@@ -60,7 +67,12 @@ public class ProductService implements IProductService {
             }
         }
 
-        return productMapper.productItemDTOsToProducts(productsByCategory);
+        var model = productMapper.productItemDTOsToProducts(productsByCategory);
+        for (var item : model) {
+            item.setPrimaryImage(productImageService.getByProductId(item.getId()).get(0).getName());
+        }
+
+        return model;
     }
 
     @SneakyThrows
@@ -71,7 +83,7 @@ public class ProductService implements IProductService {
 
         productRepository.save(product);
 
-        CreateProductImageDTO createProductImageDTO = new CreateProductImageDTO(model.getImage(), product.getId());
+        CreateProductImageDTO createProductImageDTO = new CreateProductImageDTO(model.getImages(), product.getId());
         productImageService.create(createProductImageDTO);
 
         return productMapper.productItemDTOByProduct(product);

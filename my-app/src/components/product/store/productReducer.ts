@@ -1,9 +1,14 @@
 import {
   IProductImageState,
+  IProductListState,
   IProductState,
   ProductActionTypes,
   ProductImageActionTypes,
 } from "./types";
+
+const initialState: IProductListState = {
+  list: [],
+};
 
 const initialStateProduct: IProductState = {
   _product: { id: 0, name: "", description: "", price: 0, categoryId: 0 },
@@ -11,6 +16,22 @@ const initialStateProduct: IProductState = {
 
 const initialStateProductImage: IProductImageState = {
   _images: [],
+};
+
+export const productListReducer = (
+  state = initialState,
+  action: any
+): IProductListState => {
+  switch (action.type) {
+    case ProductActionTypes.GET_PRODUCT_LIST: {
+      return {
+        ...state,
+        list: [...action.payload],
+      };
+    }
+    default:
+      return state;
+  }
 };
 
 export const productReducer = (
@@ -22,6 +43,11 @@ export const productReducer = (
       return {
         ...state,
         _product: action.payload,
+      };
+    }
+    case ProductActionTypes.PRODUCT_DELETE: {
+      return {
+        ...state,
       };
     }
     default:

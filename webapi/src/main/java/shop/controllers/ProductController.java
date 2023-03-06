@@ -2,6 +2,7 @@ package shop.controllers;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shop.dto.product.CreateProductDTO;
@@ -45,8 +46,8 @@ public class ProductController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<ProductItemDTO> createProduct(@RequestBody CreateProductDTO model) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ProductItemDTO> createProduct(@ModelAttribute CreateProductDTO model) {
         try {
             var product = productService.create(model);
             return new ResponseEntity<>(product, HttpStatus.OK);

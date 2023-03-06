@@ -8,11 +8,9 @@ import java.util.List;
 
 public interface ICategoryService {
     List<CategoryItemDTO> getAll();
-
     CategoryItemDTO getById(int id);
 
     CategoryItemDTO create(CreateCategoryDTO model);
-
     CategoryItemDTO update(int id, UpdateCategoryDTO model);
 
     List<CategoryItemDTO> delete(int id);

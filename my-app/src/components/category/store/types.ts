@@ -6,8 +6,8 @@ export interface ICategoryItem {
 }
 export interface ICategoryCreate {
   name: string;
-  image: string;
   description: string;
+  image: File | undefined;
 }
 export interface ICategoryState {
   list: Array<ICategoryItem>;

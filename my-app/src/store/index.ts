@@ -2,11 +2,11 @@ import { applyMiddleware, combineReducers, createStore } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import thunk from "redux-thunk";
 import { categoryReducer } from "../components/category/store/categoryReducer";
-import { productListReducer } from "../components/product/ProductListPage/store/productListReducer";
 import {
   productImageReducer,
+  productListReducer,
   productReducer,
-} from "../components/product/ProductPage/store/productReducer";
+} from "../components/product/store/productReducer";
 
 export const rootReducer = combineReducers({
   category: categoryReducer,

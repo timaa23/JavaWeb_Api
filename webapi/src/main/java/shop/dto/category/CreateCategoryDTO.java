@@ -2,6 +2,7 @@ package shop.dto.category;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class CreateCategoryDTO {
@@ -9,6 +10,5 @@ public class CreateCategoryDTO {
     private String name;
     @NotBlank(message = "Description is mandatory")
     private String description;
-    @NotBlank(message = "Image is mandatory")
-    private String image;
+    private MultipartFile image;
 }

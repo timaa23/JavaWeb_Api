@@ -2,10 +2,9 @@ package shop.controllers;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import shop.dto.product.ProductItemDTO;
-import shop.dto.product.UpdateProductDTO;
 import shop.dto.productImage.CreateProductImageDTO;
 import shop.dto.productImage.ProductImageItemDTO;
 import shop.dto.productImage.UpdateProductImageDTO;
@@ -46,8 +45,8 @@ public class ProductImageController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<ProductImageItemDTO> create(@RequestBody CreateProductImageDTO model) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<List<ProductImageItemDTO>> create(@ModelAttribute CreateProductImageDTO model) {
         try {
             var newImage = productImageService.create(model);
             return new ResponseEntity<>(newImage, HttpStatus.OK);

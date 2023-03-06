@@ -11,13 +11,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import shop.dto.UploadImageDTO;
+import shop.dto.category.CreateCategoryDTO;
 import shop.repositories.CategoryRepository;
 import shop.storage.StorageService;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.List;
 
 
 @RestController
@@ -44,14 +44,12 @@ public class HomeController {
 
     @SneakyThrows
     @PostMapping(value = "/test", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> test(@RequestParam("images") List<MultipartFile> multipartFiles) {
+    public ResponseEntity<String> test(@ModelAttribute CreateCategoryDTO category) {
 
         String fileNames = "Images added: \n";
 
-        for (MultipartFile file : multipartFiles) {
-            String base64 = getBase64FromMultipartFile(file);
-            fileNames += "\n" + storageService.save(base64);
-        }
+        String base64 = getBase64FromMultipartFile(category.getImage());
+        fileNames += "\n" + storageService.save(base64);
 
         return new ResponseEntity<>(fileNames, HttpStatus.OK);
     }
@@ -61,9 +59,8 @@ public class HomeController {
         byte[] bytes = multipartFile.getBytes();
         byte[] encoded = Base64.encodeBase64(bytes, false);
         String fileBase54 = new String(encoded);
-        String base64 = "data:" + multipartFile.getContentType() + ";base64," + fileBase54;
 
-        return base64;
+        return "data:" + multipartFile.getContentType() + ";base64," + fileBase54;
     }
 //    private static List<CategoryItemDTO> list = new ArrayList<>() {
 //        {

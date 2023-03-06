@@ -5,11 +5,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { IMAGES_FOLDER_HIGH } from "../../../constants/imgFolderPath";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
 import http from "../../../http_common";
-import {
-  IProductImageItem,
-  IProductListItem,
-  ProductListActionTypes,
-} from "./store/types";
+import { ProductActionTypes } from "../store/types";
 
 const ProductListPage = () => {
   const location = useLocation();
@@ -20,35 +16,16 @@ const ProductListPage = () => {
   useEffect(() => {
     const catId = qs.parse(location.search, { ignoreQueryPrefix: true });
 
-    //Отримуємо продукти по категорії та додаємо до них головне фото
-    const getProductsList = async () => {
-      try {
-        const response = await http.get(
-          `/api/products/byCategory/${catId.categoryId}`
-        );
-        const products: IProductListItem[] = response.data;
-
-        const promises = products.map(async (product) => {
-          const photoResponse = await http.get<IProductImageItem[]>(
-            `/api/productImages/byProduct/${product.id}`
-          );
-          const photos = photoResponse.data;
-
-          return { ...product, image: photos[0]?.name };
-        });
-        const productsWithPhotos = await Promise.all(promises);
-
+    try {
+      http.get(`/api/products/byCategory/${catId.categoryId}`).then((resp) => {
         dispatch({
-          type: ProductListActionTypes.PRODUCT_LIST,
-          payload: productsWithPhotos,
+          type: ProductActionTypes.GET_PRODUCT_LIST,
+          payload: resp.data,
         });
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    //
-
-    getProductsList();
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }, []);
 
   const onClickhandle = (product_id: number) => {
@@ -72,7 +49,7 @@ const ProductListPage = () => {
                   className="min-h-80 aspect-w-1 aspect-h-1 w-full overflow-hidden cursor-pointer rounded-md bg-gray-200 hover:opacity-75 lg:aspect-none lg:h-80"
                 >
                   <img
-                    src={IMAGES_FOLDER_HIGH + product.image}
+                    src={IMAGES_FOLDER_HIGH + product.primaryImage}
                     alt={product.name}
                     className="h-full w-full object-cover object-center lg:h-full lg:w-full"
                   />

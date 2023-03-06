@@ -3,6 +3,7 @@ package shop.controllers;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shop.dto.category.CategoryItemDTO;
@@ -35,8 +36,8 @@ public class CategoryController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<CategoryItemDTO> createCategory(@Valid @RequestBody CreateCategoryDTO model) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<CategoryItemDTO> createCategory(@Valid @ModelAttribute CreateCategoryDTO model) {
         var result = categoryService.create(model);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }

@@ -14,7 +14,7 @@ public interface IProductImageService {
 
     List<ProductImageItemDTO> getByProductId(int productId);
 
-    ProductImageItemDTO create(CreateProductImageDTO model);
+    List<ProductImageItemDTO> create(CreateProductImageDTO model);
     ProductImageItemDTO update(int id, UpdateProductImageDTO model);
 
     void delete(int id);

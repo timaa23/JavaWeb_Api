@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import shop.dto.product.UpdateProductDTO;
 import shop.dto.productImage.CreateProductImageDTO;
 import shop.dto.productImage.ProductImageItemDTO;
 import shop.dto.productImage.UpdateProductImageDTO;
@@ -65,16 +64,20 @@ public class ProductImageService implements IProductImageService {
 
     @SneakyThrows
     @Override
-    public ProductImageItemDTO create(CreateProductImageDTO model) {
-        ProductImageEntity productImage = productImageMapper.productImageByCreateProductImageDTO(model);
-        productImage.setProduct(new ProductEntity(model.getProductId()));
+    public List<ProductImageItemDTO> create(CreateProductImageDTO model) {
+        List<ProductImageEntity> imagesList = new ArrayList<>();
+        for (var item : model.getImages()) {
+            ProductImageEntity productImage = new ProductImageEntity();
+            String fileName = storageService.saveMultipartFile(item);
 
-        String fileName = storageService.save(model.getName());
+            productImage.setName(fileName);
+            productImage.setProduct(new ProductEntity(model.getProductId()));
 
-        productImage.setName(fileName);
+            productImageRepository.save(productImage);
+            imagesList.add(productImage);
+        }
 
-        productImageRepository.save(productImage);
-        return productImageMapper.productImageItemDTOByProductImage(productImage);
+        return productImageMapper.productImageItemDTOsToProductImages(imagesList);
     }
 
     @SneakyThrows

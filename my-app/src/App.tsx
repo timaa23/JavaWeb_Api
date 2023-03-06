@@ -10,6 +10,7 @@ import LoginPage from "./components/auth/login";
 import RegisterPage from "./components/auth/register";
 import ProductListPage from "./components/product/ProductListPage";
 import ProductPage from "./components/product/ProductPage";
+import AddProductPage from "./components/product/addProduct";
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
           <Route path="products" element={<ProductListPage />} />
           <Route path="product" element={<ProductPage />} />
           <Route path="category/create" element={<AddCategoryPage />} />
+          <Route path="product/create" element={<AddProductPage />} />
 
           <Route path="*" element={<NotFoundPage />} />
         </Route>

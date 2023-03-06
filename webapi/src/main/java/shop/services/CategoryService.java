@@ -45,7 +45,8 @@ public class CategoryService implements ICategoryService {
 
     @Override
     public CategoryItemDTO create(CreateCategoryDTO model) {
-        String fileName = storageService.save(model.getImage());
+        String fileName = storageService.saveMultipartFile(model.getImage());
+
         CategoryEntity category = categoryMapper.categoryByCreateCategoryDTO(model);
         category.setImage(fileName);
 
@@ -63,9 +64,9 @@ public class CategoryService implements ICategoryService {
         category.setName(model.getName());
         category.setDescription(model.getDescription());
 
-        if (model.getImage() != "") {
+        if (!model.getImage().equals("")) {
             String fileName = storageService.save(model.getImage());
-            //Видаляємо старе та записуємо нове фото
+
             storageService.removeFile(category.getImage());
             category.setImage(fileName);
         }

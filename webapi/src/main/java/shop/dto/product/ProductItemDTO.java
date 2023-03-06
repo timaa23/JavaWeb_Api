@@ -1,7 +1,6 @@
 package shop.dto.product;
 
 import lombok.Data;
-import shop.dto.category.CategoryItemDTO;
 
 import java.util.Date;
 
@@ -13,5 +12,6 @@ public class ProductItemDTO {
     private String description;
     Date dateCreated;
     boolean isDeleted;
+    private String primaryImage;
     private int categoryId;
 }

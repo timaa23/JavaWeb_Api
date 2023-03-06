@@ -11,7 +11,9 @@ public interface IProductService {
     List<ProductItemDTO> getAll();
     List<ProductItemDTO> getByCategoryId(int categoryId);
     ProductItemDTO getById(int id);
+
     ProductItemDTO create(CreateProductDTO model);
     ProductItemDTO update(int id, UpdateProductDTO model);
+
     void delete(int id);
 }

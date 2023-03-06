@@ -2,7 +2,7 @@ import qs from "qs";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { IMAGES_FOLDER_VERY_HIGH } from "../../../constants/imgFolderPath";
+import { IMAGES_FOLDER_HIGH } from "../../../constants/imgFolderPath";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
 import http from "../../../http_common";
 import { CategoryActionTypes, ICategoryItem } from "../store/types";
@@ -49,13 +49,13 @@ const CategoryList = () => {
                       onClick={() => onClickhandle(callout.id)}
                     >
                       <img
-                        src={IMAGES_FOLDER_VERY_HIGH + callout.image}
+                        src={IMAGES_FOLDER_HIGH + callout.image}
                         alt={callout.name}
                         className="h-full w-full object-cover object-center"
                       />
                     </div>
                     <h3 className="mt-2 text-sm text-gray-500">
-                      <Link to="/">{callout.name + "\tId: " + callout.id}</Link>
+                      <Link to="/">{callout.name}</Link>
                     </h3>
                     <p className="text-base font-semibold text-gray-900">
                       {callout.description}
