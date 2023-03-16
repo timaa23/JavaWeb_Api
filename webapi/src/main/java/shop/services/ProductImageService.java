@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import shop.dto.productImage.CreateProductImageDTO;
 import shop.dto.productImage.ProductImageItemDTO;
-import shop.dto.productImage.UpdateProductImageDTO;
 import shop.entities.ProductEntity;
 import shop.entities.ProductImageEntity;
 import shop.interfaces.IProductImageService;
@@ -17,7 +16,6 @@ import shop.storage.StorageService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -65,6 +63,7 @@ public class ProductImageService implements IProductImageService {
     @SneakyThrows
     @Override
     public List<ProductImageItemDTO> create(CreateProductImageDTO model) {
+        if(model.getImages().isEmpty())return null;
         List<ProductImageEntity> imagesList = new ArrayList<>();
         for (var item : model.getImages()) {
             ProductImageEntity productImage = new ProductImageEntity();
@@ -78,22 +77,6 @@ public class ProductImageService implements IProductImageService {
         }
 
         return productImageMapper.productImageItemDTOsToProductImages(imagesList);
-    }
-
-    @SneakyThrows
-    @Override
-    public ProductImageItemDTO update(int id, UpdateProductImageDTO model) {
-        Optional<ProductImageEntity> imageData = productImageRepository.findById(id);
-        if (!imageData.isPresent()) throw new Exception();
-
-        ProductImageEntity productImage = imageData.get();
-
-        String fileName = storageService.save(model.getName());
-        storageService.removeFile(productImage.getName());
-
-        productImage.setName(fileName);
-
-        return productImageMapper.productImageItemDTOByProductImage(productImageRepository.save(productImage));
     }
 
     @SneakyThrows

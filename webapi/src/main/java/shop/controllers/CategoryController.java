@@ -54,10 +54,10 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<List<CategoryItemDTO>> deleteCategory(@PathVariable("id") int id) {
+    public ResponseEntity<HttpStatus> deleteCategory(@PathVariable("id") int id) {
         try {
-            var categoryListResult = categoryService.delete(id);
-            return new ResponseEntity<>(categoryListResult, HttpStatus.OK);
+            categoryService.delete(id);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

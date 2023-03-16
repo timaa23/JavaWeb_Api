@@ -6,9 +6,19 @@ module.exports = {
   theme: {
     extend: {
       maxHeight: {
-        168: "42rem",
+        160: "40rem",
+        150: "37.5rem",
+      },
+      zIndex: {
+        100: "100",
       },
     },
   },
-  plugins: [require("flowbite/plugin")],
+  plugins: [
+    require("flowbite/plugin"),
+    require("tailwind-scrollbar")({ nocompatible: true }),
+  ],
+  variants: {
+    scrollbar: ["rounded"],
+  },
 };

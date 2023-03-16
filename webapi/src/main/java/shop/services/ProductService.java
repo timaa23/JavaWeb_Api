@@ -12,8 +12,10 @@ import shop.entities.CategoryEntity;
 import shop.entities.ProductEntity;
 import shop.interfaces.IProductImageService;
 import shop.interfaces.IProductService;
+import shop.mapper.ProductImageMapper;
 import shop.mapper.ProductMapper;
 import shop.repositories.CategoryRepository;
+import shop.repositories.ProductImageRepository;
 import shop.repositories.ProductRepository;
 
 import java.util.ArrayList;
@@ -32,14 +34,24 @@ public class ProductService implements IProductService {
     private final CategoryRepository categoryRepository;
     @Autowired
     private final IProductImageService productImageService;
+    @Autowired
+    private final ProductImageMapper productImageMapper;
+    @Autowired
+    private final ProductImageRepository productImageRepository;
 
     @Override
     public List<ProductItemDTO> getAll() {
-        var model = productMapper.productItemDTOsToProducts(productRepository.findAll());
-        for (var item : model) {
-            item.setPrimaryImage(productImageService.getByProductId(item.getId()).get(0).getName());
+        var products = productRepository.findAll();
+        var productItems = new ArrayList<ProductItemDTO>();
+        for (var product : products) {
+            var productItem = productMapper.productItemDTOByProduct(product);
+            for (var image : product.getProductImages()) {
+                productItem.getImages().add(productImageMapper.productImageItemDTOByProductImage(image));
+            }
+            productItems.add(productItem);
         }
-        return model;
+
+        return productItems;
     }
 
     @SneakyThrows
@@ -48,10 +60,12 @@ public class ProductService implements IProductService {
         Optional<ProductEntity> product = productRepository.findById(id);
         if (!product.isPresent()) throw new Exception();
 
-        var model = productMapper.productItemDTOByProduct(product.get());
-        model.setPrimaryImage(productImageService.getByProductId(model.getId()).get(0).getName());
+        var productItem = productMapper.productItemDTOByProduct(product.get());
+        for (var image : product.get().getProductImages()) {
+            productItem.getImages().add(productImageMapper.productImageItemDTOByProductImage(image));
+        }
 
-        return model;
+        return productItem;
     }
 
     @SneakyThrows
@@ -67,12 +81,16 @@ public class ProductService implements IProductService {
             }
         }
 
-        var model = productMapper.productItemDTOsToProducts(productsByCategory);
-        for (var item : model) {
-            item.setPrimaryImage(productImageService.getByProductId(item.getId()).get(0).getName());
+        var productItems = new ArrayList<ProductItemDTO>();
+        for (var product : productsByCategory) {
+            var productItem = productMapper.productItemDTOByProduct(product);
+            for (var image : product.getProductImages()) {
+                productItem.getImages().add(productImageMapper.productImageItemDTOByProductImage(image));
+            }
+            productItems.add(productItem);
         }
 
-        return model;
+        return productItems;
     }
 
     @SneakyThrows
@@ -96,6 +114,18 @@ public class ProductService implements IProductService {
         if (!productData.isPresent()) throw new Exception();
 
         ProductEntity product = productData.get();
+
+        System.out.println(model.getFiles().isEmpty());
+
+        for (var name : model.getRemoveFiles()) {
+            var iName = productImageRepository.findByName(name);
+            if (iName != null) {
+                productImageService.delete(iName.getId());
+            }
+        }
+
+        productImageService.create(new CreateProductImageDTO(model.getFiles(), product.getId()));
+
         product.setName(model.getName());
         product.setDescription(model.getDescription());
         product.setPrice(model.getPrice());
@@ -110,8 +140,7 @@ public class ProductService implements IProductService {
         Optional<ProductEntity> product = productRepository.findById(id);
         if (!product.isPresent()) throw new Exception();
 
-        var listImages = productImageService.getByProductId(id);
-        for (var item : listImages) {
+        for (var item : product.get().getProductImages()) {
             productImageService.delete(item.getId());
         }
 

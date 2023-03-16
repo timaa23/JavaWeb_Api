@@ -1,5 +1,3 @@
-import React, { useEffect } from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import DefaultLayout from "./components/containers/default";
@@ -11,6 +9,7 @@ import RegisterPage from "./components/auth/register";
 import ProductListPage from "./components/product/ProductListPage";
 import ProductPage from "./components/product/ProductPage";
 import AddProductPage from "./components/product/addProduct";
+import EditProductPage from "./components/product/editProduct";
 
 const App = () => {
   return (
@@ -25,6 +24,7 @@ const App = () => {
           <Route path="product" element={<ProductPage />} />
           <Route path="category/create" element={<AddCategoryPage />} />
           <Route path="product/create" element={<AddProductPage />} />
+          <Route path="product/edit" element={<EditProductPage />} />
 
           <Route path="*" element={<NotFoundPage />} />
         </Route>

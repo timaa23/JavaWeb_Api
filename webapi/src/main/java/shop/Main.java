@@ -22,7 +22,7 @@ public class Main {
         return (args -> {
             try {
                 storageService.init();
-                seedService.seedCategoryData();
+//                seedService.seedCategoryData();
             } catch (Exception ex) {
                 System.out.println("Exception------> " + ex.getMessage());
             }

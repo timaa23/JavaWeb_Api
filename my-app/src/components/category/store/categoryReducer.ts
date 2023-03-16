@@ -1,4 +1,4 @@
-import { CategoryActionTypes, ICategoryState } from "./types";
+import { CategoryActions, CategoryActionTypes, ICategoryState } from "./types";
 
 const initialState: ICategoryState = {
   list: [],
@@ -6,13 +6,13 @@ const initialState: ICategoryState = {
 
 export const categoryReducer = (
   state = initialState,
-  action: any
+  action: CategoryActions
 ): ICategoryState => {
   switch (action.type) {
     case CategoryActionTypes.CATEGORY_LIST: {
       return {
         ...state,
-        list: [...action.payload],
+        ...action.payload,
       };
     }
     case CategoryActionTypes.CATEGORY_CREATE: {
@@ -23,7 +23,7 @@ export const categoryReducer = (
     case CategoryActionTypes.CATEGORY_DELETE: {
       return {
         ...state,
-        list: [...action.payload],
+        ...action.payload,
       };
     }
     default:

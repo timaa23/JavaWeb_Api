@@ -13,5 +13,5 @@ public interface ICategoryService {
     CategoryItemDTO create(CreateCategoryDTO model);
     CategoryItemDTO update(int id, UpdateCategoryDTO model);
 
-    List<CategoryItemDTO> delete(int id);
+    void delete(int id);
 }

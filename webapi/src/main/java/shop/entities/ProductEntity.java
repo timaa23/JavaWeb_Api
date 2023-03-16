@@ -20,6 +20,7 @@ public class ProductEntity {
     @Column(nullable = false)
     private String name;
     private double price;
+    @Column(length = 20000)
     private String description;
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateCreated;
@@ -38,6 +39,6 @@ public class ProductEntity {
     @JoinColumn(name = "category_id", nullable = false)
     private CategoryEntity category;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "product")
     private List<ProductImageEntity> productImages;
 }

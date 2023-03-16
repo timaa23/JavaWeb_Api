@@ -1,9 +1,9 @@
 import {
-  IProductImageState,
   IProductListState,
   IProductState,
+  ProductActions,
   ProductActionTypes,
-  ProductImageActionTypes,
+  ProductListActions,
 } from "./types";
 
 const initialState: IProductListState = {
@@ -11,22 +11,25 @@ const initialState: IProductListState = {
 };
 
 const initialStateProduct: IProductState = {
-  _product: { id: 0, name: "", description: "", price: 0, categoryId: 0 },
-};
-
-const initialStateProductImage: IProductImageState = {
-  _images: [],
+  product: {
+    id: 0,
+    name: "",
+    description: "",
+    images: [],
+    price: 0,
+    categoryId: 0,
+  },
 };
 
 export const productListReducer = (
   state = initialState,
-  action: any
+  action: ProductListActions
 ): IProductListState => {
   switch (action.type) {
     case ProductActionTypes.GET_PRODUCT_LIST: {
       return {
         ...state,
-        list: [...action.payload],
+        ...action.payload,
       };
     }
     default:
@@ -36,34 +39,28 @@ export const productListReducer = (
 
 export const productReducer = (
   state = initialStateProduct,
-  action: any
+  action: ProductActions
 ): IProductState => {
   switch (action.type) {
     case ProductActionTypes.GET_PRODUCT: {
       return {
         ...state,
-        _product: action.payload,
+        ...action.payload,
+      };
+    }
+    case ProductActionTypes.PRODUCT_CREATE: {
+      return {
+        ...state,
+      };
+    }
+    case ProductActionTypes.PRODUCT_EDIT: {
+      return {
+        ...state,
       };
     }
     case ProductActionTypes.PRODUCT_DELETE: {
       return {
         ...state,
-      };
-    }
-    default:
-      return state;
-  }
-};
-
-export const productImageReducer = (
-  state = initialStateProductImage,
-  action: any
-): IProductImageState => {
-  switch (action.type) {
-    case ProductImageActionTypes.GET_PRODUCT_IMAGES: {
-      return {
-        ...state,
-        _images: [...action.payload],
       };
     }
     default:

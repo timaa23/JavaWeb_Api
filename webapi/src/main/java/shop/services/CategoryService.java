@@ -76,18 +76,15 @@ public class CategoryService implements ICategoryService {
 
     @SneakyThrows
     @Override
-    public List<CategoryItemDTO> delete(int id) {
+    public void delete(int id) {
         Optional<CategoryEntity> category = categoryRepository.findById(id);
         if (!category.isPresent()) throw new Exception();
 
-        var listProducts = productService.getByCategoryId(id);
-        for (var item : listProducts) {
+        for (var item : category.get().getProducts()) {
             productService.delete(item.getId());
         }
 
         storageService.removeFile(category.get().getImage());
         categoryRepository.deleteById(id);
-
-        return getAll();
     }
 }

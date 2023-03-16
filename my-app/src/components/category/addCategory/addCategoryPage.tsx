@@ -1,46 +1,24 @@
 import { ChangeEvent } from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import http from "../../../http_common";
-import { CategoryActionTypes, ICategoryCreate } from "../store/types";
+import { ICategoryCreate } from "../store/types";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useActions } from "../../../hooks/useActions";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
-const modelInitValues: ICategoryCreate = {
-  name: "",
-  description: "",
-  image: undefined,
-};
-
-const categoryCreateSchema = Yup.object().shape({
-  name: Yup.string().required("*Обов'язкове поле"),
-  description: Yup.string().required("*Обов'язкове поле"),
-  image: Yup.mixed().required("*Обов'язкове поле"),
-});
-
 const AddCategoryPage = () => {
-  const dispatch = useDispatch();
+  const { CreateCategory } = useActions();
   const navigate = useNavigate();
 
   const createCategory = async (category: ICategoryCreate) => {
     try {
-      const response = await http
-        .post("/api/categories", category, {
-          headers: { "Content-Type": "multipart/form-data" },
-        })
-        .then((resp) => {
-          dispatch({
-            type: CategoryActionTypes.CATEGORY_CREATE,
-            payaload: resp.data,
-          });
-          navigate("/");
-        });
+      await CreateCategory(category);
+      await navigate("/");
     } catch (error) {
-      console.error("Something went wrong, ", error);
+      console.error("Щось пішло не так, ", error);
     }
   };
 
@@ -50,9 +28,31 @@ const AddCategoryPage = () => {
 
   const onFileHandler = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setFieldValue("image", e.target.files[0]);
+      let file = e.target.files[0];
+
+      const fileType = file["type"];
+      const validImageTypes = ["image/jpg", "image/jpeg", "image/png"];
+
+      if (validImageTypes.includes(fileType)) {
+        setFieldValue("image", file);
+      } else {
+        console.error("Підтримуються тільки картинки!");
+      }
     }
   };
+
+  //Formik
+  const modelInitValues: ICategoryCreate = {
+    name: "",
+    description: "",
+    image: undefined,
+  };
+
+  const categoryCreateSchema = Yup.object().shape({
+    name: Yup.string().required("*Обов'язкове поле"),
+    description: Yup.string().required("*Обов'язкове поле"),
+    image: Yup.mixed().required("*Обов'язкове поле"),
+  });
 
   const formik = useFormik<ICategoryCreate>({
     initialValues: modelInitValues,
@@ -68,7 +68,6 @@ const AddCategoryPage = () => {
     errors,
     touched,
     handleBlur,
-    isValid,
   } = formik;
 
   return (
@@ -135,29 +134,48 @@ const AddCategoryPage = () => {
               ) : null}
             </div>
           </div>
-          <div className="mb-3 w-96">
-            <label
-              htmlFor="formFile"
-              className="block text-sm font-semibold leading-6 text-gray-900"
-            >
-              Фото
-            </label>
-            <input
-              className="relative m-0 block w-full min-w-0 flex-auto cursor-pointer rounded-md border border-solid border-neutral-300 bg-white bg-clip-padding px-3 py-1.5 text-base font-normal text-neutral-700 outline-none transition duration-300 ease-in-out 
-              file:-mx-3 file:-my-1.5 file:cursor-pointer file:overflow-hidden file:rounded-none file:border-0 file:border-solid file:border-inherit file:bg-neutral-100 file:px-3 file:py-1.5 file:text-neutral-700 file:transition file:duration-150 file:ease-in-out file:[margin-inline-end:0.75rem] file:[border-inline-end-width:1px] 
-              hover:file:bg-neutral-200 
-              focus:border-primary focus:bg-white focus:text-neutral-700 focus:shadow-[0_0_0_1px] focus:shadow-primary focus:outline-none"
-              name="file"
-              type="file"
-              id="formFile"
-              accept="image/*"
-              onChange={onFileHandler}
-            />
-            {touched.image && errors.image ? (
-              <div className="my-2 mx-2" style={{ color: "red" }}>
-                {errors.image}
+          <div className="sm:col-span-2">
+            <div className="flex items-center">
+              <div>
+                <label className="block text-sm font-semibold leading-6 text-gray-900">
+                  Фото
+                </label>
+
+                <div className="mt-2.5">
+                  <label
+                    htmlFor="upload"
+                    className="cursor-pointer text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5"
+                  >
+                    {values.image === undefined ? "Завантажити" : "Змінити"}
+                    <input
+                      type="file"
+                      id="upload"
+                      onChange={onFileHandler}
+                      onBlur={handleBlur}
+                      className="hidden"
+                      name="file"
+                      accept=".jpg, .jpeg, .png"
+                    />
+                  </label>
+                </div>
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {values.image !== undefined ? (
+                    <div className="overflow-hidden relative">
+                      <img
+                        className="h-48 rounded-md object-cover object-center"
+                        src={URL.createObjectURL(values.image)}
+                        alt="file"
+                      />
+                    </div>
+                  ) : null}
+                </div>
+                {touched.image && errors.image ? (
+                  <div className="my-2 mx-2" style={{ color: "red" }}>
+                    {errors.image.toString()}
+                  </div>
+                ) : null}
               </div>
-            ) : null}
+            </div>
           </div>
         </div>
         <div className="mt-10">

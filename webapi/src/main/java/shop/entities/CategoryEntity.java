@@ -20,12 +20,13 @@ public class CategoryEntity {
     @Column(nullable = false)
     private String name;
     private String image;
+    @Column(length = 20000)
     private String description;
 
     public CategoryEntity(int id) {
         this.id = id;
     }
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "category")
     private List<ProductEntity> products;
 }

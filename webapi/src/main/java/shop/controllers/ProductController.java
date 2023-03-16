@@ -1,5 +1,6 @@
 package shop.controllers;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -57,8 +58,8 @@ public class ProductController {
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ProductItemDTO> updateProduct(@PathVariable("id") int id, UpdateProductDTO model) {
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ProductItemDTO> updateProduct(@PathVariable("id") int id, @ModelAttribute UpdateProductDTO model) {
         try {
             var product = productService.update(id, model);
             return new ResponseEntity<>(product, HttpStatus.OK);

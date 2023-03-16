@@ -1,35 +1,34 @@
 import qs from "qs";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { IMAGES_FOLDER_HIGH } from "../../../constants/imgFolderPath";
+import { useActions } from "../../../hooks/useActions";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
-import http from "../../../http_common";
-import { CategoryActionTypes, ICategoryItem } from "../store/types";
 
 const CategoryList = () => {
   const { list } = useTypedSelector((store) => store.category);
-  const dispatch = useDispatch();
+  const { GetCategoryList, DeleteCategory } = useActions();
   const navigate = useNavigate();
 
+  const LoadCategories = async () => {
+    try {
+      await GetCategoryList();
+    } catch (error) {
+      console.error("Щось пішло не так, ", error);
+    }
+  };
+
   useEffect(() => {
-    http.get<Array<ICategoryItem>>("api/categories").then((resp) => {
-      dispatch({ type: CategoryActionTypes.CATEGORY_LIST, payload: resp.data });
-    });
+    LoadCategories();
   }, []);
 
   const onClickDeleteHandle = (category_id: number) => {
-    http.delete(`api/categories/${category_id}`).then((resp) => {
-      dispatch({
-        type: CategoryActionTypes.CATEGORY_DELETE,
-        payload: resp.data,
-      });
-    });
+    DeleteCategory(category_id, list);
   };
 
   const onClickhandle = (category_id: number) => {
-    const testString = qs.stringify({ categoryId: category_id });
-    navigate(`/products?` + testString);
+    const categoryIdString = qs.stringify({ category: category_id });
+    navigate(`/products?` + categoryIdString);
   };
 
   return (
@@ -45,7 +44,7 @@ const CategoryList = () => {
                 .map((callout) => (
                   <div key={callout.id} className="group relative">
                     <div
-                      className="relative h-80 mt-8 w-full overflow-hidden rounded-lg bg-white cursor-pointer hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1"
+                      className="transition duration-200 ease-out relative h-80 mt-8 w-full overflow-hidden rounded-lg bg-white cursor-pointer hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1"
                       onClick={() => onClickhandle(callout.id)}
                     >
                       <img

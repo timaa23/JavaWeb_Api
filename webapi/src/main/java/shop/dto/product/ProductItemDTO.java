@@ -1,8 +1,11 @@
 package shop.dto.product;
 
 import lombok.Data;
+import shop.dto.productImage.ProductImageItemDTO;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class ProductItemDTO {
@@ -12,6 +15,6 @@ public class ProductItemDTO {
     private String description;
     Date dateCreated;
     boolean isDeleted;
-    private String primaryImage;
+    private List<ProductImageItemDTO> images = new ArrayList<>();
     private int categoryId;
 }

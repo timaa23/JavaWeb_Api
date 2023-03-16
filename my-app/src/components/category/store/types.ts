@@ -17,3 +17,18 @@ export enum CategoryActionTypes {
   CATEGORY_CREATE = "CATEGORY_CREATE",
   CATEGORY_DELETE = "CATEGORY_DELETE",
 }
+export interface GetCategoryListAction {
+  type: CategoryActionTypes.CATEGORY_LIST;
+  payload: ICategoryState;
+}
+export interface CreateCategoryAction {
+  type: CategoryActionTypes.CATEGORY_CREATE;
+}
+export interface DeleteCategoryAction {
+  type: CategoryActionTypes.CATEGORY_DELETE;
+  payload: ICategoryState;
+}
+export type CategoryActions =
+  | GetCategoryListAction
+  | CreateCategoryAction
+  | DeleteCategoryAction;

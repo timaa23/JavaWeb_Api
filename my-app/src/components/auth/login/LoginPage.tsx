@@ -74,12 +74,12 @@ const LoginPage = () => {
               </div>
 
               <div className="text-sm">
-                <a
-                  href="#"
+                <Link
+                  to="#"
                   className="font-medium text-indigo-600 hover:text-indigo-500"
                 >
                   Забули пароль?
-                </a>
+                </Link>
               </div>
             </div>
 

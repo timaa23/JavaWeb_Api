@@ -1,46 +1,67 @@
-import { ChangeEvent, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { ChangeEvent, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { IProductCreate } from "../store/types";
+import { IProductEdit, IProductImageItem } from "../store/types";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Editor } from "@tinymce/tinymce-react";
+import qs from "qs";
+import { IMAGES_FOLDER_MEDIUM } from "../../../constants/imgFolderPath";
 import { useActions } from "../../../hooks/useActions";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
-const AddProductPage = () => {
+const EditProductPage = () => {
+  const [productImages, setProductImages] = useState<Array<IProductImageItem>>(
+    []
+  );
+  const [removeFiles, setRemoveFiles] = useState<Array<string>>([]);
   const { list } = useTypedSelector((store) => store.category);
-  const { GetCategoryList, CreateProduct } = useActions();
+  const { product } = useTypedSelector((store) => store.product);
+
+  const { GetCategoryList, GetProduct, EditProduct } = useActions();
 
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const LoadCategories = async () => {
+  const LoadProductInfo = async (id: number) => {
     try {
-      await GetCategoryList();
+      const resp: any = await GetProduct(id);
+
+      setFieldValue("name", resp.name);
+      setFieldValue("price", resp.price);
+      setFieldValue("description", resp.description);
+      setFieldValue("categoryId", resp.categoryId);
+
+      setProductImages(resp.images);
     } catch (error) {
-      console.error("Щось пішло не так, ", error);
+      console.error(error);
+      navigate("not_found");
     }
   };
 
   useEffect(() => {
-    LoadCategories();
+    const prodId = qs.parse(location.search, { ignoreQueryPrefix: true });
+    var productId = parseInt(prodId.product?.toString() ?? "0");
+
+    LoadProductInfo(productId);
+    GetCategoryList();
   }, []);
 
-  const createProduct = async (product: IProductCreate) => {
+  const editProduct = async (model: IProductEdit) => {
     try {
-      await CreateProduct(product);
+      await EditProduct(product.id, model);
       await navigate("/");
     } catch (error) {
-      console.error("Щось пішло не так, ", error);
+      console.error("Something went wrong, ", error);
     }
   };
 
-  const onSubmitHandler = async (model: IProductCreate) => {
-    createProduct(model);
+  const onSubmitHandler = async (model: IProductEdit) => {
+    editProduct(model);
   };
 
   const onFileHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -58,7 +79,7 @@ const AddProductPage = () => {
           console.error("Файл " + files[i].name + ", не є картинкою");
         }
       }
-      setFieldValue("images", [...values.images, ...newFiles]);
+      setFieldValue("files", [...values.files, ...newFiles]);
     }
   };
 
@@ -72,19 +93,26 @@ const AddProductPage = () => {
     }
   };
 
-  const onRemoveImageHandler = (i: string) => {
-    setFieldValue(
-      "images",
-      values.images.filter((x) => x.name !== i)
-    );
+  const onRemoveImageHandler = (fileName: string, isAdded: boolean) => {
+    if (isAdded === true) {
+      setFieldValue(
+        "files",
+        values.files.filter((x) => x.name !== fileName)
+      );
+    } else {
+      setRemoveFiles([...removeFiles, fileName]);
+      setProductImages(productImages.filter((x) => x.name !== fileName));
+      setFieldValue("removeFiles", [...values.removeFiles, fileName]);
+    }
   };
 
   // Formik
-  const modelInitValues: IProductCreate = {
+  const modelInitValues: IProductEdit = {
     name: "",
     price: 0,
     description: "",
-    images: [],
+    files: [],
+    removeFiles: [],
     categoryId: 0,
   };
 
@@ -95,14 +123,15 @@ const AddProductPage = () => {
       .min(1, "Ціна має бути більше 0")
       .required("*Обов'язкове поле"),
     description: Yup.string(),
-    images: Yup.array().min(1, "*Обов'язкове поле"),
+    files: Yup.array(),
+    removeFiles: Yup.array(),
     categoryId: Yup.number()
       .typeError("Ціна має бути цифрою")
       .required("*Обов'язкове поле")
       .min(1, "Ціна має бути більше 0"),
   });
 
-  const formik = useFormik<IProductCreate>({
+  const formik = useFormik<IProductEdit>({
     initialValues: modelInitValues,
     validationSchema: productCreateSchema,
     onSubmit: onSubmitHandler,
@@ -119,15 +148,35 @@ const AddProductPage = () => {
   } = formik;
 
   // Show images
-
-  const dataFileView = values.images.map((file, key) => {
+  const dataOldFileView = productImages.map((file, key) => {
     return (
       <div key={key} className="overflow-hidden relative">
         <XMarkIcon
           height={"26px"}
           width={"26px"}
           onClick={() => {
-            onRemoveImageHandler(file.name);
+            onRemoveImageHandler(file.name, false);
+          }}
+          className="absolute mt-1.5 mr-1.5 right-0 cursor-pointer border-2 border-black rounded-md hover:text-white hover:border-white"
+        ></XMarkIcon>
+
+        <img
+          className="h-36 rounded-md object-cover object-center"
+          src={IMAGES_FOLDER_MEDIUM + file.name}
+          alt="file"
+        />
+      </div>
+    );
+  });
+
+  const dataNewFileView = values.files.map((file, key) => {
+    return (
+      <div key={key} className="overflow-hidden relative">
+        <XMarkIcon
+          height={"26px"}
+          width={"26px"}
+          onClick={() => {
+            onRemoveImageHandler(file.name, true);
           }}
           className="absolute mt-1.5 mr-1.5 right-0 cursor-pointer border-2 border-black rounded-md hover:text-white hover:border-white"
         ></XMarkIcon>
@@ -145,10 +194,10 @@ const AddProductPage = () => {
     <div className="isolate bg-white py-24 px-6 sm:py-32 lg:px-8">
       <div className="mx-auto max-w-2xl text-center">
         <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-          Додати продукт
+          Редагувати продукт
         </h2>
         <p className="mt-2 text-lg leading-8 text-gray-600">
-          Ви на сторінці для додавання продукту
+          Ви на сторінці для редагування продукту
         </p>
       </div>
       <form
@@ -264,9 +313,6 @@ const AddProductPage = () => {
                 id="categorySelect"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               >
-                <option hidden defaultValue="" className="font-semibold">
-                  Категорія
-                </option>
                 {list.map((category) => (
                   <option key={category.id} value={category.id}>
                     {category.name}
@@ -302,12 +348,10 @@ const AddProductPage = () => {
                     />
                   </label>
                 </div>
-                <div className="flex flex-wrap gap-2 mt-4">{dataFileView}</div>
-                {touched.images && errors.images ? (
-                  <div className="my-2 mx-2" style={{ color: "red" }}>
-                    {errors.images.toString()}
-                  </div>
-                ) : null}
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {dataOldFileView}
+                  {dataNewFileView}
+                </div>
               </div>
             </div>
           </div>
@@ -330,4 +374,4 @@ const AddProductPage = () => {
     </div>
   );
 };
-export default AddProductPage;
+export default EditProductPage;
