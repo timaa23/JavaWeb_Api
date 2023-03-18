@@ -1,13 +1,16 @@
 import qs from "qs";
 import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { IMAGES_FOLDER_HIGH } from "../../../constants/imgFolderPath";
 import { useActions } from "../../../hooks/useActions";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
+import DeleteModal from "../../common/modal/DeleteModal";
 
 const CategoryList = () => {
-  const { list } = useTypedSelector((store) => store.category);
+  const { list } = useTypedSelector((store) => store.category.categoryList);
+
   const { GetCategoryList, DeleteCategory } = useActions();
+
   const navigate = useNavigate();
 
   const LoadCategories = async () => {
@@ -22,13 +25,17 @@ const CategoryList = () => {
     LoadCategories();
   }, []);
 
-  const onClickDeleteHandle = (category_id: number) => {
-    DeleteCategory(category_id, list);
-  };
-
   const onClickhandle = (category_id: number) => {
     const categoryIdString = qs.stringify({ category: category_id });
     navigate(`/products?` + categoryIdString);
+  };
+
+  const onClickDeleteHandle = (id: number) => {
+    try {
+      DeleteCategory(id, list);
+    } catch (error) {
+      console.error("Щось пішло не так, ", error);
+    }
   };
 
   return (
@@ -54,19 +61,19 @@ const CategoryList = () => {
                       />
                     </div>
                     <h3 className="mt-2 text-sm text-gray-500">
-                      <Link to="/">{callout.name}</Link>
+                      <p>{callout.name}</p>
                     </h3>
                     <p className="text-base font-semibold text-gray-900">
                       {callout.description}
                     </p>
 
-                    <button
-                      onClick={() => onClickDeleteHandle(callout.id)}
-                      type="button"
-                      className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 my-2"
-                    >
-                      Видалити
-                    </button>
+                    <DeleteModal
+                      id={callout.id}
+                      title="Видалення"
+                      text={`Ви дійсно хочете видалити категорію: ${callout.name}?`}
+                      buttonClassName="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 my-2"
+                      deleteFunc={onClickDeleteHandle}
+                    />
                   </div>
                 ))}
             </div>

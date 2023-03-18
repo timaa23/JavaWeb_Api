@@ -15,14 +15,15 @@ function classNames(...classes: any) {
 }
 
 const EditProductPage = () => {
+  const { list } = useTypedSelector((store) => store.category.categoryList);
+  const { product } = useTypedSelector((store) => store.product.product);
+
+  const { GetCategoryList, GetProduct, EditProduct } = useActions();
+
   const [productImages, setProductImages] = useState<Array<IProductImageItem>>(
     []
   );
   const [removeFiles, setRemoveFiles] = useState<Array<string>>([]);
-  const { list } = useTypedSelector((store) => store.category);
-  const { product } = useTypedSelector((store) => store.product);
-
-  const { GetCategoryList, GetProduct, EditProduct } = useActions();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -43,12 +44,20 @@ const EditProductPage = () => {
     }
   };
 
+  const LoadCategoryList = async () => {
+    try {
+      await GetCategoryList();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     const prodId = qs.parse(location.search, { ignoreQueryPrefix: true });
     var productId = parseInt(prodId.product?.toString() ?? "0");
 
     LoadProductInfo(productId);
-    GetCategoryList();
+    LoadCategoryList();
   }, []);
 
   const editProduct = async (model: IProductEdit) => {
@@ -60,7 +69,7 @@ const EditProductPage = () => {
     }
   };
 
-  const onSubmitHandler = async (model: IProductEdit) => {
+  const onSubmitHandler = (model: IProductEdit) => {
     editProduct(model);
   };
 

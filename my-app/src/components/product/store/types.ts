@@ -31,13 +31,16 @@ export interface IProductImageItem {
 
 export interface IProductState {
   product: IProductItem;
+  loading: boolean;
 }
 
 export interface IProductListState {
   list: Array<IProductItem>;
+  loading: boolean;
 }
 
 export enum ProductActionTypes {
+  START_REQUEST = "START_REQUEST",
   GET_PRODUCT_LIST = "GET_PRODUCT_LIST",
   GET_PRODUCT = "GET_PRODUCT",
   PRODUCT_CREATE = "PRODUCT_CREATE",
@@ -45,6 +48,9 @@ export enum ProductActionTypes {
   PRODUCT_DELETE = "PRODUCT_DELETE",
 }
 
+export interface StartRequestAction {
+  type: ProductActionTypes.START_REQUEST;
+}
 //List
 export interface GetProductListAction {
   type: ProductActionTypes.GET_PRODUCT_LIST;
@@ -57,17 +63,21 @@ export interface GetProductAction {
 }
 export interface CreateProductAction {
   type: ProductActionTypes.PRODUCT_CREATE;
+  payload: IProductState;
 }
 export interface EditProductAction {
   type: ProductActionTypes.PRODUCT_EDIT;
+  payload: IProductState;
 }
 export interface DeleteProductAction {
   type: ProductActionTypes.PRODUCT_DELETE;
+  payload: IProductListState;
 }
 
-export type ProductListActions = GetProductListAction;
+export type ProductListActions = StartRequestAction | GetProductListAction;
 
 export type ProductActions =
+  | StartRequestAction
   | GetProductAction
   | CreateProductAction
   | EditProductAction

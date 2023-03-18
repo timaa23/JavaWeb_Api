@@ -1,6 +1,5 @@
 package shop.controllers;
 
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,7 +21,6 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<List<ProductItemDTO>> getAllProducts() {
         var model = productService.getAll();
-
         return new ResponseEntity<>(productService.getAll(), HttpStatus.OK);
     }
 

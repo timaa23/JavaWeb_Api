@@ -3,17 +3,16 @@ import { StarIcon } from "@heroicons/react/20/solid";
 import { RadioGroup } from "@headlessui/react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import qs from "qs";
-import http from "../../../http_common";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
 import {
   IMAGES_FOLDER_HIGH,
   IMAGES_FOLDER_MEDIUM,
   IMAGES_FOLDER_VERY_HIGH,
 } from "../../../constants/imgFolderPath";
-import { ICategoryItem } from "../../category/store/types";
 import { useActions } from "../../../hooks/useActions";
 import Lightbox from "react-spring-lightbox";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
+import DeleteModal from "../../common/modal/DeleteModal";
 
 const productSize = {
   sizes: [
@@ -30,26 +29,23 @@ const productSize = {
 const reviews = { href: "#", average: 4, totalCount: 117 };
 
 const ProductPage = () => {
+  const { product } = useTypedSelector((store) => store.product.product);
+  const { list } = useTypedSelector((store) => store.product.productList);
+  const { category } = useTypedSelector((store) => store.category.category);
+
+  const { GetProduct, DeleteProduct, GetCategory } = useActions();
+
   const [selectedSize, setSelectedSize] = useState(productSize.sizes[2]);
-  const { product } = useTypedSelector((store) => store.product);
   const [currentImageIndex, setCurrentIndex] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
-  const [breadcrumb, setBreadcrumb] = useState<Array<ICategoryItem>>([]);
-  const { GetProduct, DeleteProduct } = useActions();
 
   const navigate = useNavigate();
   const location = useLocation();
 
   const LoadProduct = async (productId: number) => {
     try {
-      //Отримую категорії та записую breadcrumb в state
       const prodResp: any = await GetProduct(productId);
-
-      http.get<Array<ICategoryItem>>(`api/categories`).then((resp) => {
-        setBreadcrumb(
-          resp.data.filter((item) => item.id === prodResp.categoryId)
-        );
-      });
+      await GetCategory(prodResp.categoryId);
     } catch (error) {
       console.error("Щось пішло не так, ", error);
       navigate("not_found");
@@ -63,15 +59,15 @@ const ProductPage = () => {
     LoadProduct(productId);
   }, []);
 
-  const onClickEditHandle = async (id: number) => {
+  const onClickEditHandle = (id: number) => {
     const idString = qs.stringify({ product: id });
     navigate(`/product/edit?` + idString);
   };
 
-  const onClickDeleteHandle = (id: number) => {
+  const onClickDeleteHandle = async (id: number) => {
     try {
-      DeleteProduct(id);
-      navigate("/");
+      await DeleteProduct(id, list);
+      await navigate("/");
     } catch (error) {
       console.error("Щось пішло не так, ", error);
     }
@@ -97,30 +93,27 @@ const ProductPage = () => {
             role="list"
             className="mx-auto flex max-w-2xl items-center space-x-2 px-4 sm:px-6 lg:max-w-7xl lg:px-8"
           >
-            {breadcrumb.map((breadcrumb) => (
-              <li key={breadcrumb.id}>
-                <div className="flex items-center">
-                  <Link
-                    to={
-                      "/products?" + qs.stringify({ category: breadcrumb.id })
-                    }
-                    className="mr-2 text-sm font-medium text-gray-900"
-                  >
-                    {breadcrumb.name}
-                  </Link>
-                  <svg
-                    width={16}
-                    height={20}
-                    viewBox="0 0 16 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                    className="h-5 w-4 text-gray-300"
-                  >
-                    <path d="M5.697 4.34L8.98 16.532h1.327L7.025 4.341H5.697z" />
-                  </svg>
-                </div>
-              </li>
-            ))}
+            <li>
+              <div className="flex items-center">
+                <Link
+                  to={"/products?" + qs.stringify({ category: category.id })}
+                  className="mr-2 text-sm font-medium text-gray-900"
+                >
+                  {category.name}
+                </Link>
+                <svg
+                  width={16}
+                  height={20}
+                  viewBox="0 0 16 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                  className="h-5 w-4 text-gray-300"
+                >
+                  <path d="M5.697 4.34L8.98 16.532h1.327L7.025 4.341H5.697z" />
+                </svg>
+              </div>
+            </li>
+
             <li className="text-sm">
               <Link
                 to={location.search}
@@ -325,20 +318,21 @@ const ProductPage = () => {
                 type="submit"
                 className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               >
-                Add to bag
+                Додати в корзину
               </button>
               <button
                 onClick={() => onClickEditHandle(product.id)}
                 className="mt-4 flex w-full items-center justify-center rounded-md border border-transparent bg-yellow-400 py-3 px-8 text-base font-medium text-white hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:ring-offset-2"
               >
-                Edit product
+                Редагувати
               </button>
-              <button
-                onClick={() => onClickDeleteHandle(product.id)}
-                className="mt-4 flex w-full items-center justify-center rounded-md border border-transparent bg-red-600 py-3 px-8 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-              >
-                Remove product
-              </button>
+              <DeleteModal
+                id={product.id}
+                text="Видалення"
+                title={`Ви дійсно хочете видалити продукт: ${product.name}?`}
+                buttonClassName="mt-4 flex w-full items-center justify-center rounded-md border border-transparent bg-red-600 py-3 px-8 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                deleteFunc={onClickDeleteHandle}
+              />
             </form>
           </div>
 

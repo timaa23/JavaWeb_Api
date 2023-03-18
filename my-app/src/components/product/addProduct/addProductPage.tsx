@@ -13,7 +13,7 @@ function classNames(...classes: any) {
 }
 
 const AddProductPage = () => {
-  const { list } = useTypedSelector((store) => store.category);
+  const { list } = useTypedSelector((store) => store.category.categoryList);
   const { GetCategoryList, CreateProduct } = useActions();
 
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ const AddProductPage = () => {
     }
   };
 
-  const onSubmitHandler = async (model: IProductCreate) => {
+  const onSubmitHandler = (model: IProductCreate) => {
     createProduct(model);
   };
 

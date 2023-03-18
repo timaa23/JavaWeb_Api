@@ -1,17 +1,17 @@
 import qs from "qs";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { IMAGES_FOLDER_HIGH } from "../../../constants/imgFolderPath";
 import { useActions } from "../../../hooks/useActions";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
-import http from "../../../http_common";
-import { ICategoryItem } from "../../category/store/types";
 
 const ProductListPage = () => {
-  const { list } = useTypedSelector((store) => store.productList);
-  const [category, setCategory] = useState("");
+  const { list } = useTypedSelector((store) => store.product.productList);
+  const { category } = useTypedSelector((store) => store.category.category);
+
+  const { GetProductList, GetCategory } = useActions();
+
   const location = useLocation();
-  const { GetProductList } = useActions();
   const navigate = useNavigate();
 
   const LoadProducts = async (categoryId: number) => {
@@ -19,9 +19,7 @@ const ProductListPage = () => {
       //Отримую категорії та записую назву категорії в state
       await GetProductList(categoryId);
 
-      await http.get<Array<ICategoryItem>>(`api/categories`).then((resp) => {
-        setCategory(resp.data.filter((item) => item.id === categoryId)[0].name);
-      });
+      await GetCategory(categoryId);
     } catch (error) {
       console.error("Щось пішло не так, ", error);
       navigate("not_found");
@@ -44,7 +42,7 @@ const ProductListPage = () => {
     <div className="bg-white">
       <div className="mx-auto max-w-2xl py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
         <h2 className="text-2xl font-bold tracking-tight text-gray-900">
-          {category}
+          {category.name}
         </h2>
 
         {list.length !== 0 ? (

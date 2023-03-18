@@ -22,7 +22,7 @@ const AddCategoryPage = () => {
     }
   };
 
-  const onSubmitHandler = async (model: ICategoryCreate) => {
+  const onSubmitHandler = (model: ICategoryCreate) => {
     createCategory(model);
   };
 
