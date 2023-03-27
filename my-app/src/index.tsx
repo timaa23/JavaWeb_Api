@@ -6,10 +6,19 @@ import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./store";
+import { AuthActionTypes } from "./components/auth/store/types";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
+
+var token = localStorage.getItem("token");
+if (token) {
+  store.dispatch({
+    type: AuthActionTypes.LOGIN,
+    payload: { token: { token: token }, loading: false },
+  });
+}
 
 root.render(
   <Provider store={store}>

@@ -1,26 +1,25 @@
 import { useFormik } from "formik";
-import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
-import http from "../../../http_common";
+import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import {
-  IRegisterCredentials,
-  IUserTokenState,
-  UserActionTypes,
-} from "../store/types";
+import { IRegisterCredentials } from "../store/types";
+import { useActions } from "../../../hooks/useActions";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
 const RegisterPage = () => {
-  const dispatch = useDispatch();
+  const { Register } = useActions();
+
+  const navigate = useNavigate();
 
   const onSubmitHandler = (model: IRegisterCredentials) => {
-    http.post<IUserTokenState>(`/account/register`, model).then((resp) => {
-      dispatch({ type: UserActionTypes.REGISTER, payload: resp.data.token });
-      localStorage.setItem("token", resp.data.token ?? "");
-    });
+    try {
+      const prodResp: any = Register(model);
+      console.log(prodResp);
+    } catch (error) {
+      console.error("Щось пішло не так, ", error);
+    }
   };
 
   //Formik

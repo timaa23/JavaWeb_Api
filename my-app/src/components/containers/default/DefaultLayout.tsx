@@ -7,9 +7,13 @@ const DefaultLayout = () => {
   const category = useTypedSelector((store) => store.category.categoryList);
   const product = useTypedSelector((store) => store.product.product);
   const productList = useTypedSelector((store) => store.product.productList);
+  const user = useTypedSelector((store) => store.user);
   return (
     <>
-      {category.loading && product.loading && productList.loading ? (
+      {category.loading &&
+      product.loading &&
+      productList.loading &&
+      user.loading ? (
         <Loader />
       ) : null}
       <DefaultHeader />

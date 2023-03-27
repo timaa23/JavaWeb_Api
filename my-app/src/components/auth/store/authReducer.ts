@@ -1,21 +1,37 @@
-import { IUserTokenState, UserActionTypes } from "./types";
+import { AuthActions, IUserTokenState, AuthActionTypes } from "./types";
 
 const initialState: IUserTokenState = {
-  token: null,
+  token: { token: null },
+  loading: false,
 };
 
-const authReducer = (state = initialState, action: any): IUserTokenState => {
+const authReducer = (
+  state = initialState,
+  action: AuthActions
+): IUserTokenState => {
   switch (action.type) {
-    case UserActionTypes.LOGIN: {
+    case AuthActionTypes.START_REQUEST: {
       return {
         ...state,
-        token: action.payload,
+        loading: true,
       };
     }
-    case UserActionTypes.REGISTER: {
+    case AuthActionTypes.ERROR_REQUEST: {
       return {
         ...state,
-        token: action.payload,
+        loading: false,
+      };
+    }
+    case AuthActionTypes.LOGIN: {
+      return {
+        ...state,
+        ...action.payload,
+      };
+    }
+    case AuthActionTypes.REGISTER: {
+      return {
+        ...state,
+        ...action.payload,
       };
     }
     default:

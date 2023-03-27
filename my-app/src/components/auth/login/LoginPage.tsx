@@ -1,25 +1,25 @@
 import { useFormik } from "formik";
-import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import http from "../../../http_common";
-import {
-  IUserTokenState,
-  ILoginCredentials,
-  UserActionTypes,
-} from "../store/types";
+import { useActions } from "../../../hooks/useActions";
+import { ILoginCredentials } from "../store/types";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
 const LoginPage = () => {
-  const dispatch = useDispatch();
+  const { Login } = useActions();
+
+  const navigate = useNavigate();
 
   const onSubmitHandler = (model: ILoginCredentials) => {
-    http.post<IUserTokenState>(`/account/login`, model).then((resp) => {
-      dispatch({ type: UserActionTypes.LOGIN, payload: resp.data.token });
-    });
+    try {
+      const prodResp: any = Login(model);
+      console.log(prodResp);
+    } catch (error) {
+      console.error("Щось пішло не так, ", error);
+    }
   };
 
   //Formik
