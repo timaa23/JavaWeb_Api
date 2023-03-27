@@ -28,6 +28,9 @@ public class ProductController {
     public ResponseEntity<ProductItemDTO> getProductById(@PathVariable("id") int id) {
         try {
             ProductItemDTO product = productService.getById(id);
+
+//            Thread.sleep(2000);
+
             return new ResponseEntity<>(product, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -39,6 +42,9 @@ public class ProductController {
     public ResponseEntity<List<ProductItemDTO>> getByCategoryId(@PathVariable("category_id") int id) {
         try {
             var products = productService.getByCategoryId(id);
+
+//            Thread.sleep(2000);
+
             return new ResponseEntity<>(products, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

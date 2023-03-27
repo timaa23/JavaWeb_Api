@@ -2,6 +2,7 @@ package shop.controllers;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +20,13 @@ import java.util.List;
 public class CategoryController {
     private final ICategoryService categoryService;
 
+    @SneakyThrows
     @GetMapping
     public ResponseEntity<List<CategoryItemDTO>> getAllCategories() {
         var model = categoryService.getAll();
+
+//        Thread.sleep(2000);
+
         return new ResponseEntity<>(model, HttpStatus.OK);
     }
 

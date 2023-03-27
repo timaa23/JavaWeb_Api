@@ -22,7 +22,8 @@ public class Main {
         return (args -> {
             try {
                 storageService.init();
-//                seedService.seedCategoryData();
+                seedService.seedRoleData();
+                seedService.seedUserData();
             } catch (Exception ex) {
                 System.out.println("Exception------> " + ex.getMessage());
             }

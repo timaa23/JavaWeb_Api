@@ -21,6 +21,7 @@ export interface ICategoryListState {
 
 export enum CategoryActionTypes {
   START_REQUEST = "START_REQUEST",
+  ERROR_REQUEST = "ERROR_REQUEST",
   CATEGORY_GET = "CATEGORY_GET",
   CATEGORY_LIST = "CATEGORY_LIST",
   CATEGORY_CREATE = "CATEGORY_CREATE",
@@ -29,6 +30,9 @@ export enum CategoryActionTypes {
 
 export interface StartRequestAction {
   type: CategoryActionTypes.START_REQUEST;
+}
+export interface ErrorRequestAction {
+  type: CategoryActionTypes.ERROR_REQUEST;
 }
 
 export interface GetCategoryAction {
@@ -49,6 +53,7 @@ export interface DeleteCategoryAction {
 }
 
 export type CategoryActions =
+  | ErrorRequestAction
   | GetCategoryAction
   | StartRequestAction
   | GetCategoryListAction

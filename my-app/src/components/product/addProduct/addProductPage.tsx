@@ -27,6 +27,7 @@ const AddProductPage = () => {
   };
 
   useEffect(() => {
+    document.title = "Додати продукт - Магазин";
     LoadCategories();
   }, []);
 
@@ -122,16 +123,15 @@ const AddProductPage = () => {
 
   const dataFileView = values.images.map((file, key) => {
     return (
-      <div key={key} className="overflow-hidden relative">
-        <XMarkIcon
-          height={"26px"}
-          width={"26px"}
-          onClick={() => {
-            onRemoveImageHandler(file.name);
-          }}
-          className="absolute mt-1.5 mr-1.5 right-0 cursor-pointer border-2 border-black rounded-md hover:text-white hover:border-white"
-        ></XMarkIcon>
-
+      <div key={key} className="overflow-hidden relative imageView">
+        <div className="hideSection">
+          <XMarkIcon
+            onClick={() => {
+              onRemoveImageHandler(file.name);
+            }}
+            className="w-6 h-6 absolute mt-1.5 mr-1.5 right-0 cursor-pointer border-2 border-black rounded-md hover:text-white hover:border-white"
+          ></XMarkIcon>
+        </div>
         <img
           className="h-36 rounded-md object-cover object-center"
           src={URL.createObjectURL(file)}

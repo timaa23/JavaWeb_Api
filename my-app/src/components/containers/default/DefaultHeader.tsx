@@ -18,7 +18,7 @@ const solutions = [
   {
     name: "Додати продукт",
     description: "Створіть новий продукт",
-    href: "/product/create",
+    href: "/products/create",
     icon: PlusCircleIcon,
   },
 ];

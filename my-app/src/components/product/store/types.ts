@@ -41,6 +41,7 @@ export interface IProductListState {
 
 export enum ProductActionTypes {
   START_REQUEST = "START_REQUEST",
+  ERROR_REQUEST = "ERROR_REQUEST",
   GET_PRODUCT_LIST = "GET_PRODUCT_LIST",
   GET_PRODUCT = "GET_PRODUCT",
   PRODUCT_CREATE = "PRODUCT_CREATE",
@@ -50,6 +51,9 @@ export enum ProductActionTypes {
 
 export interface StartRequestAction {
   type: ProductActionTypes.START_REQUEST;
+}
+export interface ErrorRequestAction {
+  type: ProductActionTypes.ERROR_REQUEST;
 }
 //List
 export interface GetProductListAction {
@@ -74,10 +78,10 @@ export interface DeleteProductAction {
   payload: IProductListState;
 }
 
-export type ProductListActions = StartRequestAction | GetProductListAction;
-
 export type ProductActions =
   | StartRequestAction
+  | ErrorRequestAction
+  | GetProductListAction
   | GetProductAction
   | CreateProductAction
   | EditProductAction

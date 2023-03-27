@@ -1,6 +1,59 @@
+import { useFormik } from "formik";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import http from "../../../http_common";
+import * as Yup from "yup";
+import {
+  IRegisterCredentials,
+  IUserTokenState,
+  UserActionTypes,
+} from "../store/types";
+
+function classNames(...classes: any) {
+  return classes.filter(Boolean).join(" ");
+}
 
 const RegisterPage = () => {
+  const dispatch = useDispatch();
+
+  const onSubmitHandler = (model: IRegisterCredentials) => {
+    http.post<IUserTokenState>(`/account/register`, model).then((resp) => {
+      dispatch({ type: UserActionTypes.REGISTER, payload: resp.data.token });
+      localStorage.setItem("token", resp.data.token ?? "");
+    });
+  };
+
+  //Formik
+  const modelInitValues: IRegisterCredentials = {
+    firstname: "",
+    lastname: "",
+    email: "",
+    password: "",
+  };
+
+  const registerSchema = Yup.object().shape({
+    firstname: Yup.string().required("*Обов'язкове поле"),
+    lastname: Yup.string().required("*Обов'язкове поле"),
+    email: Yup.string().required("*Обов'язкове поле"),
+    password: Yup.string().required("*Обов'язкове поле"),
+  });
+
+  const formik = useFormik<IRegisterCredentials>({
+    initialValues: modelInitValues,
+    validationSchema: registerSchema,
+    onSubmit: onSubmitHandler,
+  });
+
+  const {
+    handleSubmit,
+    values,
+    handleChange,
+    setFieldValue,
+    errors,
+    touched,
+    handleBlur,
+  } = formik;
+
   return (
     <>
       <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -24,21 +77,42 @@ const RegisterPage = () => {
               </Link>
             </p>
           </div>
-          <form className="mt-8 space-y-6" action="#" method="POST">
+          <form
+            className="mt-8 space-y-6"
+            onSubmit={handleSubmit}
+            action="#"
+            method="POST"
+          >
             <input type="hidden" name="remember" defaultValue="true" />
             <div className="-space-y-px rounded-md shadow-sm">
               <div>
-                <label htmlFor="name" className="sr-only">
+                <label htmlFor="firstname" className="sr-only">
                   Ім'я
                 </label>
                 <input
-                  id="name"
-                  name="name"
-                  type="name"
-                  autoComplete="current-name"
-                  required
+                  id="firstname"
+                  name="firstname"
+                  type="text"
+                  value={values.firstname}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
                   className="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                   placeholder="Ім'я"
+                />
+              </div>
+              <div>
+                <label htmlFor="lastname" className="sr-only">
+                  Прізвище
+                </label>
+                <input
+                  id="lastname"
+                  name="lastname"
+                  type="text"
+                  value={values.lastname}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className="relative block w-full appearance-none rounded-none rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                  placeholder="Прізвище"
                 />
               </div>
               <div>
@@ -49,9 +123,11 @@ const RegisterPage = () => {
                   id="email-address"
                   name="email"
                   type="email"
+                  value={values.email}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
                   autoComplete="email"
-                  required
-                  className="relative block w-full appearance-none rounded-none border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                  className="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 mt-3 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                   placeholder="Email"
                 />
               </div>
@@ -63,8 +139,10 @@ const RegisterPage = () => {
                   id="password"
                   name="password"
                   type="password"
+                  value={values.password}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
                   autoComplete="current-password"
-                  required
                   className="relative block w-full appearance-none rounded-none rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                   placeholder="Пароль"
                 />
@@ -74,7 +152,13 @@ const RegisterPage = () => {
             <div>
               <button
                 type="submit"
-                className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                disabled={!(formik.isValid && formik.dirty)}
+                className={classNames(
+                  !(formik.isValid && formik.dirty)
+                    ? "bg-indigo-400"
+                    : "bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2",
+                  "group relative flex w-full justify-center rounded-md border border-transparent py-2 px-4 text-sm font-medium text-white"
+                )}
               >
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3"></span>
                 Зареєструватися

@@ -1,4 +1,4 @@
-import CategoryList from "../category/categoryList";
+import CategoryList from "../category/CategoryList";
 
 const HomePage = () => {
   return (

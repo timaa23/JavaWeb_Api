@@ -22,6 +22,7 @@ export const GetCategory =
 
       return Promise.resolve(data);
     } catch (error) {
+      dispatch({ type: CategoryActionTypes.ERROR_REQUEST });
       return Promise.reject(error);
     }
   };
@@ -41,6 +42,7 @@ export const GetCategoryList =
 
       return Promise.resolve(data);
     } catch (error) {
+      dispatch({ type: CategoryActionTypes.ERROR_REQUEST });
       return Promise.reject(error);
     }
   };
@@ -64,6 +66,7 @@ export const DeleteCategory =
 
       return Promise.resolve(data);
     } catch (error) {
+      dispatch({ type: CategoryActionTypes.ERROR_REQUEST });
       return Promise.reject(error);
     }
   };
@@ -86,6 +89,7 @@ export const CreateCategory =
 
       return Promise.resolve(data);
     } catch (error) {
+      dispatch({ type: CategoryActionTypes.ERROR_REQUEST });
       return Promise.reject(error);
     }
   };

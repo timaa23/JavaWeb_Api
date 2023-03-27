@@ -1,5 +1,6 @@
 package shop.interfaces;
 
 public interface ISeedService {
-    void seedCategoryData();
+    void seedUserData();
+    void seedRoleData();
 }

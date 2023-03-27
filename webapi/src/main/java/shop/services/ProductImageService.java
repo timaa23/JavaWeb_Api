@@ -21,13 +21,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ProductImageService implements IProductImageService {
-    @Autowired
     ProductImageRepository productImageRepository;
-    @Autowired
     ProductImageMapper productImageMapper;
-    @Autowired
     ProductRepository productRepository;
-    @Autowired
     StorageService storageService;
 
     @Override
@@ -63,7 +59,7 @@ public class ProductImageService implements IProductImageService {
     @SneakyThrows
     @Override
     public List<ProductImageItemDTO> create(CreateProductImageDTO model) {
-        if(model.getImages().isEmpty())return null;
+        if (model.getImages().isEmpty()) return null;
         List<ProductImageEntity> imagesList = new ArrayList<>();
         for (var item : model.getImages()) {
             ProductImageEntity productImage = new ProductImageEntity();

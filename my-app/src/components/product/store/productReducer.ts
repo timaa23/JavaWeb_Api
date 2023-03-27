@@ -4,7 +4,6 @@ import {
   IProductState,
   ProductActions,
   ProductActionTypes,
-  ProductListActions,
 } from "./types";
 
 const initialState: IProductListState = {
@@ -26,13 +25,19 @@ const initialStateProduct: IProductState = {
 
 const productListReducer = (
   state = initialState,
-  action: ProductListActions
+  action: ProductActions
 ): IProductListState => {
   switch (action.type) {
     case ProductActionTypes.START_REQUEST: {
       return {
         ...state,
         loading: true,
+      };
+    }
+    case ProductActionTypes.ERROR_REQUEST: {
+      return {
+        ...state,
+        loading: false,
       };
     }
     case ProductActionTypes.GET_PRODUCT_LIST: {
@@ -56,6 +61,12 @@ const productReducer = (
       return {
         ...state,
         loading: true,
+      };
+    }
+    case ProductActionTypes.ERROR_REQUEST: {
+      return {
+        ...state,
+        loading: false,
       };
     }
     case ProductActionTypes.GET_PRODUCT: {

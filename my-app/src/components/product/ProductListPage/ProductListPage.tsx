@@ -1,6 +1,5 @@
-import qs from "qs";
 import { useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { IMAGES_FOLDER_HIGH } from "../../../constants/imgFolderPath";
 import { useActions } from "../../../hooks/useActions";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
@@ -9,34 +8,34 @@ const ProductListPage = () => {
   const { list } = useTypedSelector((store) => store.product.productList);
   const { category } = useTypedSelector((store) => store.category.category);
 
+  const { id } = useParams();
+
   const { GetProductList, GetCategory } = useActions();
 
-  const location = useLocation();
   const navigate = useNavigate();
 
   const LoadProducts = async (categoryId: number) => {
     try {
       //Отримую категорії та записую назву категорії в state
-      await GetProductList(categoryId);
+      const resp: any = await GetProductList(categoryId);
+      if (resp === "AUTH_ERROR") {
+        console.log(resp);
+        navigate("/");
+        return;
+      }
 
-      await GetCategory(categoryId);
+      const catResp: any = await GetCategory(categoryId);
+      document.title = catResp.name + " - Магазин";
     } catch (error) {
       console.error("Щось пішло не так, ", error);
-      navigate("not_found");
+      //navigate("not_found");
     }
   };
 
   useEffect(() => {
-    const catId = qs.parse(location.search, { ignoreQueryPrefix: true });
-    var categoryId = parseInt(catId.category?.toString() ?? "0");
-
+    var categoryId = parseInt(id?.toString() ?? "0");
     LoadProducts(categoryId);
   }, []);
-
-  const onClickhandle = (product_id: number) => {
-    const idString = qs.stringify({ product: product_id });
-    navigate(`/product?` + idString);
-  };
 
   return (
     <div className="bg-white">
@@ -49,24 +48,25 @@ const ProductListPage = () => {
           <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
             {list.map((product) => (
               <div key={product.id} className="group relative">
-                <div
-                  onClick={() => onClickhandle(product.id)}
-                  className="transition duration-200 ease-out min-h-80 aspect-w-1 aspect-h-1 w-full overflow-hidden cursor-pointer rounded-md bg-gray-200 hover:opacity-75 lg:aspect-none lg:h-80"
-                >
-                  <img
-                    src={
-                      product.images.length > 0
-                        ? IMAGES_FOLDER_HIGH + product.images[0].name
-                        : ""
-                    }
-                    alt={product.name}
-                    className="h-full w-full object-cover object-center lg:h-full lg:w-full"
-                  />
-                </div>
+                <Link to={"/products/view/" + product.id}>
+                  <div className="transition duration-200 ease-out min-h-80 aspect-w-1 aspect-h-1 w-full overflow-hidden cursor-pointer rounded-md bg-gray-200 hover:opacity-75 lg:aspect-none lg:h-80">
+                    <img
+                      src={
+                        product.images.length > 0
+                          ? IMAGES_FOLDER_HIGH + product.images[0].name
+                          : ""
+                      }
+                      alt={product.name}
+                      className="h-full w-full object-cover object-center"
+                    />
+                  </div>
+                </Link>
                 <div className="mt-4 flex justify-between">
                   <div>
                     <h3 className="text-sm text-gray-700">
-                      <Link to={"/" + location.search}>{product.name}</Link>
+                      <Link to={"/products/view/" + product.id}>
+                        {product.name}
+                      </Link>
                     </h3>
                     <p className="mt-1 text-sm text-gray-500">
                       Description tmp

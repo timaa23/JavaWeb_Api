@@ -1,6 +1,10 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 const NotFoundPage = () => {
+  useEffect(() => {
+    document.title = "404 - Магазин";
+  }, []);
   return (
     <>
       <main className="grid min-h-full place-items-center bg-white py-24 px-6 sm:py-32 lg:px-8">

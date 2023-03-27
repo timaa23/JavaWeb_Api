@@ -1,18 +1,11 @@
 import { useEffect, useState } from "react";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { RadioGroup } from "@headlessui/react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import qs from "qs";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
-import {
-  IMAGES_FOLDER_HIGH,
-  IMAGES_FOLDER_MEDIUM,
-  IMAGES_FOLDER_VERY_HIGH,
-} from "../../../constants/imgFolderPath";
 import { useActions } from "../../../hooks/useActions";
-import Lightbox from "react-spring-lightbox";
-import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import DeleteModal from "../../common/modal/DeleteModal";
+import ImageSlider from "../../common/imageSlider/ImageSlider";
 
 const productSize = {
   sizes: [
@@ -33,10 +26,11 @@ const ProductPage = () => {
   const { list } = useTypedSelector((store) => store.product.productList);
   const { category } = useTypedSelector((store) => store.category.category);
 
+  const { id } = useParams();
+
   const { GetProduct, DeleteProduct, GetCategory } = useActions();
 
   const [selectedSize, setSelectedSize] = useState(productSize.sizes[2]);
-  const [currentImageIndex, setCurrentIndex] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
 
   const navigate = useNavigate();
@@ -46,6 +40,7 @@ const ProductPage = () => {
     try {
       const prodResp: any = await GetProduct(productId);
       await GetCategory(prodResp.categoryId);
+      document.title = prodResp.name + " - Магазин";
     } catch (error) {
       console.error("Щось пішло не так, ", error);
       navigate("not_found");
@@ -53,15 +48,13 @@ const ProductPage = () => {
   };
 
   useEffect(() => {
-    const prodId = qs.parse(location.search, { ignoreQueryPrefix: true });
-    var productId = parseInt(prodId.product?.toString() ?? "0");
+    var productId = parseInt(id?.toString() ?? "0");
 
     LoadProduct(productId);
   }, []);
 
   const onClickEditHandle = (id: number) => {
-    const idString = qs.stringify({ product: id });
-    navigate(`/product/edit?` + idString);
+    navigate("/products/edit/" + id);
   };
 
   const onClickDeleteHandle = async (id: number) => {
@@ -72,18 +65,6 @@ const ProductPage = () => {
       console.error("Щось пішло не так, ", error);
     }
   };
-
-  const setIsOpenHandle = (id: any) => {
-    setIsOpen(true);
-    setCurrentIndex(id);
-  };
-
-  const gotoPrevious = () =>
-    currentImageIndex > 0 && setCurrentIndex(currentImageIndex - 1);
-
-  const gotoNext = () =>
-    currentImageIndex + 1 < product.images.length &&
-    setCurrentIndex(currentImageIndex + 1);
 
   return (
     <div className={isOpen === true ? "bg-white blur-sm" : "bg-white"}>
@@ -96,7 +77,7 @@ const ProductPage = () => {
             <li>
               <div className="flex items-center">
                 <Link
-                  to={"/products?" + qs.stringify({ category: category.id })}
+                  to={"/products/list/" + category.id}
                   className="mr-2 text-sm font-medium text-gray-900"
                 >
                   {category.name}
@@ -127,78 +108,7 @@ const ProductPage = () => {
         </nav>
 
         {/* Image slider  */}
-        <div className="flex justify-center items-center my-6">
-          <div className="flex flex-col items-center overflow-auto overscroll-none scroll-pt-1 snap-y max-h-[37.5rem] scrollbar-thin scrollbar-thumb-indigo-700 scrollbar-track-indigo-300 scrollbar-thumb-rounded-md scrollbar-track-rounded-md">
-            {product.images.slice(1).map((image, index) => (
-              <div className="snap-start">
-                <img
-                  key={image.id}
-                  src={IMAGES_FOLDER_MEDIUM + image.name}
-                  alt={image.name}
-                  className="transition duration-200 ease-out h-24 max-w-max rounded-sm my-1.5 mx-2 cursor-pointer border border-black hover:ring-black hover:ring-2 hover:brightness-75"
-                  onClick={() => setIsOpenHandle(index + 1)}
-                />
-              </div>
-            ))}
-          </div>
-          <img
-            src={
-              product.images.length > 0
-                ? IMAGES_FOLDER_HIGH + product.images[0].name
-                : ""
-            }
-            style={{ display: "inline-block" }}
-            alt={product.images.length > 0 ? product.images[0].name : ""}
-            className="transition duration-200 ease-out max-h-[37.5rem] rounded-lg mx-6 cursor-pointer hover:brightness-95"
-            onClick={() => setIsOpenHandle(0)}
-          />
-        </div>
-
-        <Lightbox
-          isOpen={isOpen}
-          onClose={() => setIsOpen(false)}
-          onPrev={gotoPrevious}
-          onNext={gotoNext}
-          images={product.images.map((image) => ({
-            key: image.id,
-            src: IMAGES_FOLDER_VERY_HIGH + image.name,
-            alt: image.name,
-            className: "rounded-lg",
-          }))}
-          currentIndex={currentImageIndex}
-          singleClickToZoom
-          renderPrevButton={() => (
-            <>
-              {currentImageIndex !== 0 ? (
-                <ArrowLeftIcon
-                  width={50}
-                  onClick={gotoPrevious}
-                  className="cursor-pointer z-[100] ml-10 hidden md:block"
-                />
-              ) : null}
-            </>
-          )}
-          renderNextButton={() => (
-            <>
-              {currentImageIndex !== product.images.length - 1 ? (
-                <ArrowRightIcon
-                  width={50}
-                  onClick={gotoNext}
-                  className="cursor-pointer z-[100] mr-10 hidden md:block"
-                />
-              ) : null}
-            </>
-          )}
-          renderImageOverlay={() => (
-            <>
-              <div className="absolute top-3 right-3 bg-gray-400 p-2 rounded-lg opacity-60">
-                <p className="font-semibold">
-                  {currentImageIndex + 1} / {product.images.length}
-                </p>
-              </div>
-            </>
-          )}
-        />
+        <ImageSlider images={product.images} onOpenLarge={setIsOpen} />
 
         {/* Product info */}
         <div className="mx-auto max-w-2xl px-4 pt-10 pb-16 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr] lg:gap-x-8 lg:px-8 lg:pt-16 lg:pb-24">

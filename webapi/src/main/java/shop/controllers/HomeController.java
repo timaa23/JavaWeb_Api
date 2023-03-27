@@ -23,7 +23,6 @@ import java.util.Date;
 @RestController
 @AllArgsConstructor
 public class HomeController {
-    private final CategoryRepository categoryRepository;
     private final StorageService storageService;
 
     @GetMapping("/files/{filename:.+}")

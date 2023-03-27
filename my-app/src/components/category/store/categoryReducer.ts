@@ -27,6 +27,12 @@ const categoryReducer = (
         loading: true,
       };
     }
+    case CategoryActionTypes.ERROR_REQUEST: {
+      return {
+        ...state,
+        loading: false,
+      };
+    }
     case CategoryActionTypes.CATEGORY_GET: {
       return {
         ...state,
@@ -48,6 +54,12 @@ const categoryListReducer = (
       return {
         ...state,
         loading: true,
+      };
+    }
+    case CategoryActionTypes.ERROR_REQUEST: {
+      return {
+        ...state,
+        loading: false,
       };
     }
     case CategoryActionTypes.CATEGORY_GET: {

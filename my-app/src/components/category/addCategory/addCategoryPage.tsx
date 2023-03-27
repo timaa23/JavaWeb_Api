@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ICategoryCreate } from "../store/types";
 import { useFormik } from "formik";
@@ -12,6 +12,10 @@ function classNames(...classes: any) {
 const AddCategoryPage = () => {
   const { CreateCategory } = useActions();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.title = "Додати категорію - Магазин";
+  }, []);
 
   const createCategory = async (category: ICategoryCreate) => {
     try {
@@ -184,7 +188,7 @@ const AddCategoryPage = () => {
             type="submit"
             className={classNames(
               !(formik.isValid && formik.dirty)
-                ? "rounded-md bg-indigo-400"
+                ? "bg-indigo-400"
                 : "bg-indigo-600 hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600",
               "block w-full rounded-md px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm"
             )}

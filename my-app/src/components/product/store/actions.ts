@@ -6,17 +6,17 @@ import {
   IProductItem,
   ProductActions,
   ProductActionTypes,
-  ProductListActions,
 } from "./types";
 
 export const GetProductList =
-  (categoryId: number) => async (dispatch: Dispatch<ProductListActions>) => {
+  (categoryId: number) => async (dispatch: Dispatch<ProductActions>) => {
     try {
       dispatch({ type: ProductActionTypes.START_REQUEST });
 
       const resp = await http.get<Array<IProductItem>>(
         `/api/products/byCategory/${categoryId}`
       );
+      console.log("resp log ", resp);
 
       const { data } = resp;
       dispatch({
@@ -26,6 +26,9 @@ export const GetProductList =
 
       return Promise.resolve(data);
     } catch (error) {
+      dispatch({
+        type: ProductActionTypes.ERROR_REQUEST,
+      });
       return Promise.reject(error);
     }
   };
@@ -45,6 +48,9 @@ export const GetProduct =
 
       return Promise.resolve(data);
     } catch (error) {
+      dispatch({
+        type: ProductActionTypes.ERROR_REQUEST,
+      });
       return Promise.reject(error);
     }
   };
@@ -66,6 +72,9 @@ export const CreateProduct =
 
       return Promise.resolve(data);
     } catch (error) {
+      dispatch({
+        type: ProductActionTypes.ERROR_REQUEST,
+      });
       return Promise.reject(error);
     }
   };
@@ -88,6 +97,9 @@ export const EditProduct =
 
       return Promise.resolve(data);
     } catch (error) {
+      dispatch({
+        type: ProductActionTypes.ERROR_REQUEST,
+      });
       return Promise.reject(error);
     }
   };
@@ -111,6 +123,9 @@ export const DeleteProduct =
 
       return Promise.resolve(data);
     } catch (error) {
+      dispatch({
+        type: ProductActionTypes.ERROR_REQUEST,
+      });
       return Promise.reject(error);
     }
   };

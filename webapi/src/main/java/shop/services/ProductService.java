@@ -26,17 +26,11 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class ProductService implements IProductService {
-    @Autowired
     private final ProductRepository productRepository;
-    @Autowired
     private final ProductMapper productMapper;
-    @Autowired
     private final CategoryRepository categoryRepository;
-    @Autowired
     private final IProductImageService productImageService;
-    @Autowired
     private final ProductImageMapper productImageMapper;
-    @Autowired
     private final ProductImageRepository productImageRepository;
 
     @Override

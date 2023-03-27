@@ -20,13 +20,9 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class CategoryService implements ICategoryService {
-    @Autowired
     private final CategoryRepository categoryRepository;
-    @Autowired
     private final CategoryMapper categoryMapper;
-    @Autowired
     private final StorageService storageService;
-    @Autowired
     private final IProductService productService;
 
     @Override

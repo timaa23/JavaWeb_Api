@@ -1,12 +1,11 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { IProductEdit, IProductImageItem } from "../store/types";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Editor } from "@tinymce/tinymce-react";
-import qs from "qs";
 import { IMAGES_FOLDER_MEDIUM } from "../../../constants/imgFolderPath";
 import { useActions } from "../../../hooks/useActions";
 
@@ -18,6 +17,8 @@ const EditProductPage = () => {
   const { list } = useTypedSelector((store) => store.category.categoryList);
   const { product } = useTypedSelector((store) => store.product.product);
 
+  const { id } = useParams();
+
   const { GetCategoryList, GetProduct, EditProduct } = useActions();
 
   const [productImages, setProductImages] = useState<Array<IProductImageItem>>(
@@ -26,11 +27,12 @@ const EditProductPage = () => {
   const [removeFiles, setRemoveFiles] = useState<Array<string>>([]);
 
   const navigate = useNavigate();
-  const location = useLocation();
 
   const LoadProductInfo = async (id: number) => {
     try {
       const resp: any = await GetProduct(id);
+
+      document.title = "Редагувати продукт " + resp.name + " - Магазин";
 
       setFieldValue("name", resp.name);
       setFieldValue("price", resp.price);
@@ -53,8 +55,7 @@ const EditProductPage = () => {
   };
 
   useEffect(() => {
-    const prodId = qs.parse(location.search, { ignoreQueryPrefix: true });
-    var productId = parseInt(prodId.product?.toString() ?? "0");
+    var productId = parseInt(id?.toString() ?? "0");
 
     LoadProductInfo(productId);
     LoadCategoryList();
@@ -125,7 +126,7 @@ const EditProductPage = () => {
     categoryId: 0,
   };
 
-  const productCreateSchema = Yup.object().shape({
+  const productEditSchema = Yup.object().shape({
     name: Yup.string().required("*Обов'язкове поле"),
     price: Yup.number()
       .typeError("Ціна має бути цифрою")
@@ -142,7 +143,7 @@ const EditProductPage = () => {
 
   const formik = useFormik<IProductEdit>({
     initialValues: modelInitValues,
-    validationSchema: productCreateSchema,
+    validationSchema: productEditSchema,
     onSubmit: onSubmitHandler,
   });
 
@@ -159,15 +160,15 @@ const EditProductPage = () => {
   // Show images
   const dataOldFileView = productImages.map((file, key) => {
     return (
-      <div key={key} className="overflow-hidden relative">
-        <XMarkIcon
-          height={"26px"}
-          width={"26px"}
-          onClick={() => {
-            onRemoveImageHandler(file.name, false);
-          }}
-          className="absolute mt-1.5 mr-1.5 right-0 cursor-pointer border-2 border-black rounded-md hover:text-white hover:border-white"
-        ></XMarkIcon>
+      <div key={key} className="overflow-hidden relative imageView">
+        <div className="hideSection">
+          <XMarkIcon
+            onClick={() => {
+              onRemoveImageHandler(file.name, false);
+            }}
+            className="w-6 h-6 absolute mt-1.5 mr-1.5 right-0 cursor-pointer border-2 border-black rounded-md hover:text-white hover:border-white"
+          ></XMarkIcon>
+        </div>
 
         <img
           className="h-36 rounded-md object-cover object-center"
@@ -180,16 +181,15 @@ const EditProductPage = () => {
 
   const dataNewFileView = values.files.map((file, key) => {
     return (
-      <div key={key} className="overflow-hidden relative">
-        <XMarkIcon
-          height={"26px"}
-          width={"26px"}
-          onClick={() => {
-            onRemoveImageHandler(file.name, true);
-          }}
-          className="absolute mt-1.5 mr-1.5 right-0 cursor-pointer border-2 border-black rounded-md hover:text-white hover:border-white"
-        ></XMarkIcon>
-
+      <div key={key} className="overflow-hidden relative imageView">
+        <div className="hideSection">
+          <XMarkIcon
+            onClick={() => {
+              onRemoveImageHandler(file.name, true);
+            }}
+            className="w-6 h-6 absolute mt-1.5 mr-1.5 right-0 cursor-pointer border-2 border-black rounded-md hover:text-white hover:border-white"
+          ></XMarkIcon>
+        </div>
         <img
           className="h-36 rounded-md object-cover object-center"
           src={URL.createObjectURL(file)}
@@ -376,7 +376,7 @@ const EditProductPage = () => {
               "block w-full rounded-md px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm"
             )}
           >
-            Додати
+            Зберегти
           </button>
         </div>
       </form>
