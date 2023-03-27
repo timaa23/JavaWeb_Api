@@ -1,5 +1,6 @@
 package shop.controllers;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,6 +16,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("api/products")
+@SecurityRequirement(name = "vovan-api")
 public class ProductController {
     private final IProductService productService;
 
