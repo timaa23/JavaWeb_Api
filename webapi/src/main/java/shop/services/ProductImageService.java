@@ -21,10 +21,10 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ProductImageService implements IProductImageService {
-    ProductImageRepository productImageRepository;
-    ProductImageMapper productImageMapper;
-    ProductRepository productRepository;
-    StorageService storageService;
+    private final ProductImageRepository productImageRepository;
+    private final ProductImageMapper productImageMapper;
+    private final ProductRepository productRepository;
+    private final StorageService storageService;
 
     @Override
     public List<ProductImageItemDTO> getAll() {

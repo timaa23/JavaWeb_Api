@@ -2,18 +2,18 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { IProductEdit, IProductImageItem } from "../store/types";
-import { useTypedSelector } from "../../../hooks/useTypedSelector";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Editor } from "@tinymce/tinymce-react";
-import { IMAGES_FOLDER_MEDIUM } from "../../../constants/imgFolderPath";
-import { useActions } from "../../../hooks/useActions";
+import { useTypedSelector } from "../../../../hooks/useTypedSelector";
+import { useActions } from "../../../../hooks/useActions";
+import { IProductEdit, IProductImageItem } from "../../../product/store/types";
+import { IMAGES_FOLDER_MEDIUM } from "../../../../constants/imgFolderPath";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
-const EditProductPage = () => {
+const AdminEditProductPage = () => {
   const { list } = useTypedSelector((store) => store.category.categoryList);
   const { product } = useTypedSelector((store) => store.product.product);
 
@@ -234,11 +234,9 @@ const EditProductPage = () => {
                 id="name"
                 className="block w-full rounded-md border-0 py-2 px-3.5 text-sm leading-6 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
               />
-              {touched.name && errors.name ? (
-                <div className="my-2 mx-2" style={{ color: "red" }}>
-                  {errors.name}
-                </div>
-              ) : null}
+              {touched.name && errors.name && (
+                <div className="my-2 mx-2 text-red-600">{errors.name}</div>
+              )}
             </div>
           </div>
 
@@ -260,7 +258,7 @@ const EditProductPage = () => {
                 init={{
                   height: 500,
                   plugins:
-                    "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss",
+                    "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount",
                   toolbar:
                     "undo redo | fontsize | align lineheight | link image media | blocks fontfamily | bold italic underline strikethrough | removeformat | table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | checklist numlist bullist indent outdent | emoticons charmap",
                   tinycomments_mode: "embedded",
@@ -271,11 +269,11 @@ const EditProductPage = () => {
                   ],
                 }}
               />
-              {touched.description && errors.description ? (
-                <div className="my-2 mx-2" style={{ color: "red" }}>
+              {touched.description && errors.description && (
+                <div className="my-2 mx-2 text-red-600">
                   {errors.description}
                 </div>
-              ) : null}
+              )}
             </div>
           </div>
 
@@ -299,11 +297,9 @@ const EditProductPage = () => {
                 id="price"
                 className="block w-full rounded-md border-0 py-2 px-3.5 text-sm leading-6 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
               />
-              {touched.price && errors.price ? (
-                <div className="my-2 mx-2" style={{ color: "red" }}>
-                  {errors.price}
-                </div>
-              ) : null}
+              {touched.price && errors.price && (
+                <div className="my-2 mx-2 text-red-600">{errors.price}</div>
+              )}
             </div>
           </div>
 
@@ -383,4 +379,4 @@ const EditProductPage = () => {
     </div>
   );
 };
-export default EditProductPage;
+export default AdminEditProductPage;

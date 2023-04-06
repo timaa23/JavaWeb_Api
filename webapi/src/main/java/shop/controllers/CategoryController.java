@@ -1,5 +1,6 @@
 package shop.controllers;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -17,6 +18,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("api/categories")
+@SecurityRequirement(name = "vovan-api")
 public class CategoryController {
     private final ICategoryService categoryService;
 

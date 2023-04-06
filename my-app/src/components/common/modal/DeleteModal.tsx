@@ -10,13 +10,13 @@ interface Props {
   deleteFunc: (id: number) => void;
 }
 
-export default function DeleteModal({
+const DeleteModal: React.FC<Props> = ({
   id,
   title,
   text,
   buttonClassName,
   deleteFunc,
-}: Props) {
+}) => {
   const [open, setOpen] = useState(false);
 
   const cancelButtonRef = useRef(null);
@@ -110,4 +110,5 @@ export default function DeleteModal({
       </Transition.Root>
     </>
   );
-}
+};
+export default DeleteModal;

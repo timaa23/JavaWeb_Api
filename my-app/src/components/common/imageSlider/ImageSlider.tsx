@@ -4,7 +4,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "@heroicons/react/24/outline";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Lightbox from "react-spring-lightbox";
 import {
   IMAGES_FOLDER_HIGH,
@@ -15,14 +15,12 @@ import { IProductImageItem } from "../../product/store/types";
 
 interface Props {
   images: Array<IProductImageItem>;
-  onOpenLarge: (isOpenLarge: boolean) => void;
 }
 
-const ImageSlider = ({ images, onOpenLarge }: Props) => {
+const ImageSlider: React.FC<Props> = ({ images }) => {
   const [_images, setImages] = useState<Array<IProductImageItem>>([]);
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [currentFullImageIndex, setCurrentFullImageIndex] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -42,17 +40,8 @@ const ImageSlider = ({ images, onOpenLarge }: Props) => {
 
   const setIsOpenHandle = (id: any) => {
     setIsOpen(true);
-    onOpenLarge(true);
-    setCurrentFullImageIndex(id);
+    setCurrentImageIndex(id);
   };
-
-  const gotoPreviousFull = () =>
-    currentFullImageIndex > 0 &&
-    setCurrentFullImageIndex(currentFullImageIndex - 1);
-
-  const gotoNextFull = () =>
-    currentFullImageIndex + 1 < _images.length &&
-    setCurrentFullImageIndex(currentFullImageIndex + 1);
 
   const scrollSmallImage = () => {
     var imgElement = document.getElementById(`img-${currentImageIndex}`);
@@ -64,6 +53,11 @@ const ImageSlider = ({ images, onOpenLarge }: Props) => {
   };
   return (
     <>
+      <div
+        className={
+          isOpen ? "fixed inset-0 z-50 w-full h-full backdrop-blur-sm" : ""
+        }
+      />
       <div className="flex justify-center items-center mt-6 mb-2 ">
         <ChevronLeftIcon
           onClick={gotoPrevious}
@@ -123,43 +117,42 @@ const ImageSlider = ({ images, onOpenLarge }: Props) => {
         isOpen={isOpen}
         onClose={() => {
           setIsOpen(false);
-          onOpenLarge(false);
         }}
-        onPrev={gotoPreviousFull}
-        onNext={gotoNextFull}
+        onPrev={gotoPrevious}
+        onNext={gotoNext}
         images={_images.map((image) => ({
           key: image.id,
           src: IMAGES_FOLDER_VERY_HIGH + image.name,
           alt: image.name,
           className: "rounded-lg",
         }))}
-        currentIndex={currentFullImageIndex}
+        currentIndex={currentImageIndex}
         renderPrevButton={() => (
           <>
-            {currentFullImageIndex !== 0 ? (
+            {currentImageIndex !== 0 && (
               <ArrowLeftIcon
                 width={50}
-                onClick={gotoPreviousFull}
+                onClick={gotoPrevious}
                 className="w-12 transition-transform cursor-pointer z-[100] ml-10 hidden md:block active:scale-90"
               />
-            ) : null}
+            )}
           </>
         )}
         renderNextButton={() => (
           <>
-            {currentFullImageIndex !== _images.length - 1 ? (
+            {currentImageIndex !== _images.length - 1 && (
               <ArrowRightIcon
-                onClick={gotoNextFull}
+                onClick={gotoNext}
                 className="w-12 transition-transform cursor-pointer z-[100] mr-10 hidden md:block active:scale-90"
               />
-            ) : null}
+            )}
           </>
         )}
         renderImageOverlay={() => (
           <>
             <div className="absolute top-3 right-3 bg-gray-400 p-2 rounded-lg opacity-60">
               <p className="font-semibold">
-                {currentFullImageIndex + 1} / {_images.length}
+                {currentImageIndex + 1} / {_images.length}
               </p>
             </div>
           </>

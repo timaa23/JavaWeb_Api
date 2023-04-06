@@ -28,22 +28,49 @@ const productListReducer = (
   action: ProductActions
 ): IProductListState => {
   switch (action.type) {
-    case ProductActionTypes.START_REQUEST: {
+    case ProductActionTypes.PRODUCT_LIST_GET: {
       return {
         ...state,
         loading: true,
       };
     }
-    case ProductActionTypes.ERROR_REQUEST: {
+    case ProductActionTypes.PRODUCT_ALL_LIST_GET: {
+      return {
+        ...state,
+        loading: true,
+      };
+    }
+    case ProductActionTypes.PRODUCT_DELETE: {
+      return {
+        ...state,
+        loading: true,
+      };
+    }
+
+    case ProductActionTypes.PRODUCT_LIST_GET_SUCCES: {
+      return {
+        ...state,
+        ...action.payload,
+        loading: false,
+      };
+    }
+    case ProductActionTypes.PRODUCT_ALL_LIST_GET_SUCCES: {
+      return {
+        ...state,
+        ...action.payload,
+        loading: false,
+      };
+    }
+    case ProductActionTypes.PRODUCT_DELETE_SUCCES: {
       return {
         ...state,
         loading: false,
       };
     }
-    case ProductActionTypes.GET_PRODUCT_LIST: {
+
+    case ProductActionTypes.ERROR_REQUEST: {
       return {
         ...state,
-        ...action.payload,
         loading: false,
       };
     }
@@ -57,38 +84,46 @@ const productReducer = (
   action: ProductActions
 ): IProductState => {
   switch (action.type) {
-    case ProductActionTypes.START_REQUEST: {
+    case ProductActionTypes.PRODUCT_GET: {
       return {
         ...state,
         loading: true,
       };
     }
-    case ProductActionTypes.ERROR_REQUEST: {
+    case ProductActionTypes.PRODUCT_CREATE: {
       return {
         ...state,
-        loading: false,
+        loading: true,
       };
     }
-    case ProductActionTypes.GET_PRODUCT: {
+    case ProductActionTypes.PRODUCT_EDIT: {
+      return {
+        ...state,
+        loading: true,
+      };
+    }
+
+    case ProductActionTypes.PRODUCT_GET_SUCCES: {
       return {
         ...state,
         ...action.payload,
         loading: false,
       };
     }
-    case ProductActionTypes.PRODUCT_CREATE: {
+    case ProductActionTypes.PRODUCT_CREATE_SUCCES: {
       return {
         ...state,
         loading: false,
       };
     }
-    case ProductActionTypes.PRODUCT_EDIT: {
+    case ProductActionTypes.PRODUCT_EDIT_SUCCES: {
       return {
         ...state,
         loading: false,
       };
     }
-    case ProductActionTypes.PRODUCT_DELETE: {
+
+    case ProductActionTypes.ERROR_REQUEST: {
       return {
         ...state,
         loading: false,

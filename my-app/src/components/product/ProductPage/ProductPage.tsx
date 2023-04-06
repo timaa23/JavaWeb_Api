@@ -4,7 +4,6 @@ import { RadioGroup } from "@headlessui/react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
 import { useActions } from "../../../hooks/useActions";
-import DeleteModal from "../../common/modal/DeleteModal";
 import ImageSlider from "../../common/imageSlider/ImageSlider";
 
 const productSize = {
@@ -23,15 +22,13 @@ const reviews = { href: "#", average: 4, totalCount: 117 };
 
 const ProductPage = () => {
   const { product } = useTypedSelector((store) => store.product.product);
-  const { list } = useTypedSelector((store) => store.product.productList);
   const { category } = useTypedSelector((store) => store.category.category);
 
   const { id } = useParams();
 
-  const { GetProduct, DeleteProduct, GetCategory } = useActions();
+  const { GetProduct, GetCategory } = useActions();
 
   const [selectedSize, setSelectedSize] = useState(productSize.sizes[2]);
-  const [isOpen, setIsOpen] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -43,7 +40,7 @@ const ProductPage = () => {
       document.title = prodResp.name + " - Магазин";
     } catch (error) {
       console.error("Щось пішло не так, ", error);
-      navigate("not_found");
+      navigate("/not_found");
     }
   };
 
@@ -53,21 +50,8 @@ const ProductPage = () => {
     LoadProduct(productId);
   }, []);
 
-  const onClickEditHandle = (id: number) => {
-    navigate("/products/edit/" + id);
-  };
-
-  const onClickDeleteHandle = async (id: number) => {
-    try {
-      await DeleteProduct(id, list);
-      await navigate("/");
-    } catch (error) {
-      console.error("Щось пішло не так, ", error);
-    }
-  };
-
   return (
-    <div className={isOpen === true ? "bg-white blur-sm" : "bg-white"}>
+    <div className="bg-white">
       <div className="pt-6">
         <nav aria-label="Breadcrumb">
           <ol
@@ -108,7 +92,7 @@ const ProductPage = () => {
         </nav>
 
         {/* Image slider  */}
-        <ImageSlider images={product.images} onOpenLarge={setIsOpen} />
+        <ImageSlider images={product.images} />
 
         {/* Product info */}
         <div className="mx-auto max-w-2xl px-4 pt-10 pb-16 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr] lg:gap-x-8 lg:px-8 lg:pt-16 lg:pb-24">
@@ -230,19 +214,6 @@ const ProductPage = () => {
               >
                 Додати в корзину
               </button>
-              <button
-                onClick={() => onClickEditHandle(product.id)}
-                className="mt-4 flex w-full items-center justify-center rounded-md border border-transparent bg-yellow-400 py-3 px-8 text-base font-medium text-white hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:ring-offset-2"
-              >
-                Редагувати
-              </button>
-              <DeleteModal
-                id={product.id}
-                text="Видалення"
-                title={`Ви дійсно хочете видалити продукт: ${product.name}?`}
-                buttonClassName="mt-4 flex w-full items-center justify-center rounded-md border border-transparent bg-red-600 py-3 px-8 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                deleteFunc={onClickDeleteHandle}
-              />
             </form>
           </div>
 

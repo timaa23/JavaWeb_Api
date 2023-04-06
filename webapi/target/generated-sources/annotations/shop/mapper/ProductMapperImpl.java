@@ -11,7 +11,7 @@ import shop.entities.ProductEntity;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-03-22T20:21:46+0200",
+    date = "2023-04-05T19:22:01+0300",
     comments = "version: 1.5.3.Final, compiler: javac, environment: Java 19.0.2 (Oracle Corporation)"
 )
 @Component

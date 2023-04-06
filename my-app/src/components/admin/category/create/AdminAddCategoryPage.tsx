@@ -1,15 +1,15 @@
 import { ChangeEvent, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ICategoryCreate } from "../store/types";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useActions } from "../../../hooks/useActions";
+import { useActions } from "../../../../hooks/useActions";
+import { ICategoryCreate } from "../../../category/store/types";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
-const AddCategoryPage = () => {
+const AdminAddCategoryPage = () => {
   const { CreateCategory } = useActions();
   const navigate = useNavigate();
 
@@ -108,11 +108,9 @@ const AddCategoryPage = () => {
                 id="name"
                 className="block w-full rounded-md border-0 py-2 px-3.5 text-sm leading-6 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
               />
-              {touched.name && errors.name ? (
-                <div className="my-2 mx-2" style={{ color: "red" }}>
-                  {errors.name}
-                </div>
-              ) : null}
+              {touched.name && errors.name && (
+                <div className="my-2 mx-2 text-red-600">{errors.name}</div>
+              )}
             </div>
           </div>
           <div className="sm:col-span-2">
@@ -131,11 +129,9 @@ const AddCategoryPage = () => {
                 id="description"
                 className="block w-full rounded-md border-0 py-2 px-3.5 text-sm leading-6 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
               />
-              {touched.description && errors.description ? (
-                <div className="my-2 mx-2" style={{ color: "red" }}>
-                  {errors.name}
-                </div>
-              ) : null}
+              {touched.description && errors.description && (
+                <div className="my-2 mx-2 text-red-600">{errors.name}</div>
+              )}
             </div>
           </div>
           <div className="sm:col-span-2">
@@ -163,7 +159,7 @@ const AddCategoryPage = () => {
                   </label>
                 </div>
                 <div className="flex flex-wrap gap-2 mt-4">
-                  {values.image !== undefined ? (
+                  {values.image !== undefined && (
                     <div className="overflow-hidden relative">
                       <img
                         className="h-48 rounded-md object-cover object-center"
@@ -171,13 +167,8 @@ const AddCategoryPage = () => {
                         alt="file"
                       />
                     </div>
-                  ) : null}
+                  )}
                 </div>
-                {touched.image && errors.image ? (
-                  <div className="my-2 mx-2" style={{ color: "red" }}>
-                    {errors.image.toString()}
-                  </div>
-                ) : null}
               </div>
             </div>
           </div>
@@ -200,4 +191,4 @@ const AddCategoryPage = () => {
     </div>
   );
 };
-export default AddCategoryPage;
+export default AdminAddCategoryPage;

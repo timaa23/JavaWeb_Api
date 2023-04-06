@@ -40,49 +40,82 @@ export interface IProductListState {
 }
 
 export enum ProductActionTypes {
-  START_REQUEST = "START_REQUEST",
-  ERROR_REQUEST = "ERROR_REQUEST",
-  GET_PRODUCT_LIST = "GET_PRODUCT_LIST",
-  GET_PRODUCT = "GET_PRODUCT",
+  PRODUCT_GET = "PRODUCT_GET",
+  PRODUCT_LIST_GET = "PRODUCT_LIST_GET",
+  PRODUCT_ALL_LIST_GET = "PRODUCT_ALL_LIST_GET",
   PRODUCT_CREATE = "PRODUCT_CREATE",
   PRODUCT_EDIT = "PRODUCT_EDIT",
   PRODUCT_DELETE = "PRODUCT_DELETE",
+
+  PRODUCT_GET_SUCCES = "PRODUCT_GET_SUCCES",
+  PRODUCT_LIST_GET_SUCCES = "PRODUCT_LIST_GET_SUCCES",
+  PRODUCT_ALL_LIST_GET_SUCCES = "PRODUCT_ALL_LIST_GET_SUCCES",
+  PRODUCT_CREATE_SUCCES = "PRODUCT_CREATE_SUCCES",
+  PRODUCT_EDIT_SUCCES = "PRODUCT_EDIT_SUCCES",
+  PRODUCT_DELETE_SUCCES = "PRODUCT_DELETE_SUCCES",
+
+  ERROR_REQUEST = "ERROR_REQUEST",
 }
 
-export interface StartRequestAction {
-  type: ProductActionTypes.START_REQUEST;
+export interface ProductGetAction {
+  type: ProductActionTypes.PRODUCT_GET;
 }
+export interface ProductListGetAction {
+  type: ProductActionTypes.PRODUCT_LIST_GET;
+}
+export interface ProductAllListGetAction {
+  type: ProductActionTypes.PRODUCT_ALL_LIST_GET;
+}
+export interface ProductCreateAction {
+  type: ProductActionTypes.PRODUCT_CREATE;
+}
+export interface ProductEditAction {
+  type: ProductActionTypes.PRODUCT_EDIT;
+}
+export interface ProductDeleteAction {
+  type: ProductActionTypes.PRODUCT_DELETE;
+}
+
+export interface ProductGetSuccesAction {
+  type: ProductActionTypes.PRODUCT_GET_SUCCES;
+  payload: IProductState;
+}
+export interface ProductListGetSuccesAction {
+  type: ProductActionTypes.PRODUCT_LIST_GET_SUCCES;
+  payload: IProductListState;
+}
+export interface ProductAllListGetSuccesAction {
+  type: ProductActionTypes.PRODUCT_ALL_LIST_GET_SUCCES;
+  payload: IProductListState;
+}
+export interface ProductCreateSuccesAction {
+  type: ProductActionTypes.PRODUCT_CREATE_SUCCES;
+  payload: IProductState;
+}
+export interface ProductEditSuccesAction {
+  type: ProductActionTypes.PRODUCT_EDIT_SUCCES;
+  payload: IProductState;
+}
+export interface ProductDeleteSuccesAction {
+  type: ProductActionTypes.PRODUCT_DELETE_SUCCES;
+  payload: IProductListState;
+}
+
 export interface ErrorRequestAction {
   type: ProductActionTypes.ERROR_REQUEST;
 }
-//List
-export interface GetProductListAction {
-  type: ProductActionTypes.GET_PRODUCT_LIST;
-  payload: IProductListState;
-}
-//
-export interface GetProductAction {
-  type: ProductActionTypes.GET_PRODUCT;
-  payload: IProductState;
-}
-export interface CreateProductAction {
-  type: ProductActionTypes.PRODUCT_CREATE;
-  payload: IProductState;
-}
-export interface EditProductAction {
-  type: ProductActionTypes.PRODUCT_EDIT;
-  payload: IProductState;
-}
-export interface DeleteProductAction {
-  type: ProductActionTypes.PRODUCT_DELETE;
-  payload: IProductListState;
-}
 
 export type ProductActions =
-  | StartRequestAction
-  | ErrorRequestAction
-  | GetProductListAction
-  | GetProductAction
-  | CreateProductAction
-  | EditProductAction
-  | DeleteProductAction;
+  | ProductGetAction
+  | ProductListGetAction
+  | ProductAllListGetAction
+  | ProductCreateAction
+  | ProductEditAction
+  | ProductDeleteAction
+  | ProductGetSuccesAction
+  | ProductListGetSuccesAction
+  | ProductAllListGetSuccesAction
+  | ProductCreateSuccesAction
+  | ProductEditSuccesAction
+  | ProductDeleteSuccesAction
+  | ErrorRequestAction;

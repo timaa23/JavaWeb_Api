@@ -21,22 +21,36 @@ const categoryReducer = (
   action: CategoryActions
 ): ICategoryState => {
   switch (action.type) {
-    case CategoryActionTypes.START_REQUEST: {
+    case CategoryActionTypes.CATEGORY_GET: {
       return {
         ...state,
         loading: true,
       };
     }
-    case CategoryActionTypes.ERROR_REQUEST: {
+    case CategoryActionTypes.CATEGORY_CREATE: {
+      return {
+        ...state,
+        loading: true,
+      };
+    }
+
+    case CategoryActionTypes.CATEGORY_GET_SUCCES: {
+      return {
+        ...state,
+        ...action.payload,
+        loading: false,
+      };
+    }
+    case CategoryActionTypes.CATEGORY_CREATE_SUCCES: {
       return {
         ...state,
         loading: false,
       };
     }
-    case CategoryActionTypes.CATEGORY_GET: {
+
+    case CategoryActionTypes.ERROR_REQUEST: {
       return {
         ...state,
-        ...action.payload,
         loading: false,
       };
     }
@@ -50,42 +64,37 @@ const categoryListReducer = (
   action: CategoryActions
 ): ICategoryListState => {
   switch (action.type) {
-    case CategoryActionTypes.START_REQUEST: {
+    case CategoryActionTypes.CATEGORY_LIST_GET: {
       return {
         ...state,
         loading: true,
       };
     }
-    case CategoryActionTypes.ERROR_REQUEST: {
-      return {
-        ...state,
-        loading: false,
-      };
-    }
-    case CategoryActionTypes.CATEGORY_GET: {
-      return {
-        ...state,
-        ...action.payload,
-        loading: false,
-      };
-    }
-    case CategoryActionTypes.CATEGORY_LIST: {
-      return {
-        ...state,
-        ...action.payload,
-        loading: false,
-      };
-    }
-    case CategoryActionTypes.CATEGORY_CREATE: {
-      return {
-        ...state,
-        loading: false,
-      };
-    }
     case CategoryActionTypes.CATEGORY_DELETE: {
       return {
         ...state,
+        loading: true,
+      };
+    }
+
+    case CategoryActionTypes.CATEGORY_LIST_GET_SUCCES: {
+      return {
+        ...state,
         ...action.payload,
+        loading: false,
+      };
+    }
+    case CategoryActionTypes.CATEGORY_DELETE_SUCCES: {
+      return {
+        ...state,
+        ...action.payload,
+        loading: false,
+      };
+    }
+
+    case CategoryActionTypes.ERROR_REQUEST: {
+      return {
+        ...state,
         loading: false,
       };
     }

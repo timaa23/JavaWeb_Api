@@ -1,37 +1,70 @@
-import { AuthActions, IUserTokenState, AuthActionTypes } from "./types";
+import { AuthActionTypes, AuthActions, IAuthUser } from "./types";
 
-const initialState: IUserTokenState = {
-  token: { token: null },
+const initialState: IAuthUser = {
+  isAuth: false,
   loading: false,
 };
 
-const authReducer = (
-  state = initialState,
-  action: AuthActions
-): IUserTokenState => {
+const authReducer = (state = initialState, action: AuthActions): IAuthUser => {
   switch (action.type) {
-    case AuthActionTypes.START_REQUEST: {
+    case AuthActionTypes.LOGIN_USER: {
       return {
         ...state,
         loading: true,
       };
     }
+    case AuthActionTypes.REGISTER_USER: {
+      return {
+        ...state,
+        loading: true,
+      };
+    }
+    case AuthActionTypes.GOOGLE_LOGIN_USER: {
+      return {
+        ...state,
+        loading: true,
+      };
+    }
+    case AuthActionTypes.LOGOUT_USER: {
+      return {
+        ...state,
+        loading: true,
+      };
+    }
+
+    case AuthActionTypes.LOGIN_USER_SUCCES: {
+      return {
+        ...state,
+        ...action.payload,
+        loading: false,
+      };
+    }
+    case AuthActionTypes.REGISTER_USER_SUCCES: {
+      return {
+        ...state,
+        ...action.payload,
+        loading: false,
+      };
+    }
+    case AuthActionTypes.GOOGLE_LOGIN_USER_SUCCES: {
+      return {
+        ...state,
+        ...action.payload,
+        loading: false,
+      };
+    }
+    case AuthActionTypes.LOGOUT_USER_SUCCES: {
+      return {
+        ...state,
+        ...action.payload,
+        loading: false,
+      };
+    }
+
     case AuthActionTypes.ERROR_REQUEST: {
       return {
         ...state,
         loading: false,
-      };
-    }
-    case AuthActionTypes.LOGIN: {
-      return {
-        ...state,
-        ...action.payload,
-      };
-    }
-    case AuthActionTypes.REGISTER: {
-      return {
-        ...state,
-        ...action.payload,
       };
     }
     default:
