@@ -1,13 +1,11 @@
 package shop.services;
 
 import lombok.SneakyThrows;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.web.client.RestOperations;
 import shop.configuration.captcha.CaptchaSettings;
 import shop.configuration.captcha.GoogleResponse;
-import shop.dto.account.AuthResponseDTO;
-import shop.dto.account.GoogleAuthDTO;
-import shop.dto.account.LoginDTO;
-import shop.dto.account.RegisterDTO;
+import shop.dto.account.*;
 import shop.configuration.security.JwtService;
 import shop.constants.Roles;
 import shop.entities.UserEntity;
@@ -21,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import shop.repositories.UserRoleRepository;
+import shop.storage.StorageService;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +33,7 @@ public class AccountService {
     private final CaptchaSettings captchaSettings;
     private final RestOperations restTemplate;
     private final GoogleAuthService googleAuthService;
+    private final StorageService storageService;
     private static final String GoogleAuthDefaultPassword = "r1ymxIrTAwf5Y7LloIza";
     private static final String GoogleAuthDefaultToken = "DefaultGoogleAuthWithNoToken";
     protected static final String RECAPTCHA_URL_TEMPLATE = "https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s";
@@ -125,6 +125,27 @@ public class AccountService {
         );
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow();
+        var jwtToken = jwtService.generateAccessToken(user);
+        return AuthResponseDTO.builder()
+                .token(jwtToken)
+                .build();
+    }
+
+    @SneakyThrows
+    public AuthResponseDTO changeImage(UserChangeImageDTO request) {
+        if (request.getImage().isEmpty()) throw new Exception();
+        jwtService.validate(request.getToken());
+
+        var user = repository.findById(Integer.parseInt(jwtService.getUserId(request.getToken())))
+                .orElseThrow();
+
+        storageService.removeFile(user.getImage());
+
+        String fileName = storageService.saveMultipartFile(request.getImage());
+        user.setImage(fileName);
+
+        repository.save(user);
+
         var jwtToken = jwtService.generateAccessToken(user);
         return AuthResponseDTO.builder()
                 .token(jwtToken)

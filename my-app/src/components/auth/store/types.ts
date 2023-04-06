@@ -51,11 +51,13 @@ export enum AuthActionTypes {
   REGISTER_USER = "REGISTER_USER",
   GOOGLE_LOGIN_USER = "GOOGLE_LOGIN_USER",
   LOGOUT_USER = "LOGOUT_USER",
+  USER_CHANGE_IMAGE = "USER_CHANGE_IMAGE",
 
   LOGIN_USER_SUCCES = "LOGIN_USER_SUCCES",
   REGISTER_USER_SUCCES = "REGISTER_USER_SUCCES",
   GOOGLE_LOGIN_USER_SUCCES = "GOOGLE_LOGIN_USER_SUCCES",
   LOGOUT_USER_SUCCES = "LOGOUT_USER_SUCCES",
+  USER_CHANGE_IMAGE_SUCCES = "USER_CHANGE_IMAGE_SUCCES",
 
   ERROR_REQUEST = "ERROR_REQUEST",
 }
@@ -69,8 +71,11 @@ export interface RegisternUserAction {
 export interface GoogleLoginUserAction {
   type: AuthActionTypes.GOOGLE_LOGIN_USER;
 }
-export interface LooutUserAction {
+export interface LogutUserAction {
   type: AuthActionTypes.LOGOUT_USER;
+}
+export interface UserChangeImageAction {
+  type: AuthActionTypes.USER_CHANGE_IMAGE;
 }
 
 export interface LoginUserSuccesAction {
@@ -85,8 +90,12 @@ export interface GoogleLoginUserSuccesAction {
   type: AuthActionTypes.GOOGLE_LOGIN_USER_SUCCES;
   payload: IAuthUser;
 }
-export interface LooutUserSuccesAction {
+export interface LogutUserSuccesAction {
   type: AuthActionTypes.LOGOUT_USER_SUCCES;
+  payload: IAuthUser;
+}
+export interface UserChangeImageSuccesAction {
+  type: AuthActionTypes.USER_CHANGE_IMAGE_SUCCES;
   payload: IAuthUser;
 }
 
@@ -98,9 +107,11 @@ export type AuthActions =
   | LoginUserAction
   | RegisternUserAction
   | GoogleLoginUserAction
-  | LooutUserAction
+  | LogutUserAction
+  | UserChangeImageAction
   | LoginUserSuccesAction
   | RegisternUserSuccesAction
   | GoogleLoginUserSuccesAction
-  | LooutUserSuccesAction
+  | LogutUserSuccesAction
+  | UserChangeImageSuccesAction
   | ErrorRequestAction;

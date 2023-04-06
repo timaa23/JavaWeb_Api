@@ -28,7 +28,6 @@ const LoginPage = () => {
 
   const onSubmitHandler = async (model: ILoginCredentials) => {
     try {
-      console.log("rec: ", executeRecaptcha);
       if (!executeRecaptcha) return;
       model.reCaptchaToken = await executeRecaptcha();
 

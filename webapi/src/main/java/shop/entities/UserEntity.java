@@ -30,6 +30,9 @@ public class UserEntity {
     @Column(length = 200, nullable = false)
     private String password;
 
+    private String image;
+
+
     @OneToMany(mappedBy = "user")
     private List<UserRoleEntity> userRoles = new ArrayList<>();
 }

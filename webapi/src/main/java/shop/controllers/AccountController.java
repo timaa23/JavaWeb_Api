@@ -2,16 +2,10 @@ package shop.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import shop.dto.account.AuthResponseDTO;
-import shop.dto.account.GoogleAuthDTO;
-import shop.dto.account.LoginDTO;
-import shop.dto.account.RegisterDTO;
-import shop.google.GoogleAuthService;
+import org.springframework.web.bind.annotation.*;
+import shop.dto.account.*;
 import shop.services.AccountService;
 
 @RestController
@@ -19,6 +13,15 @@ import shop.services.AccountService;
 @RequiredArgsConstructor
 public class AccountController {
     private final AccountService service;
+
+    @PostMapping(value = "/change-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AuthResponseDTO> changeImage(@ModelAttribute UserChangeImageDTO request) {
+        try {
+            return new ResponseEntity<>(service.changeImage(request), HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @PostMapping("/google-auth")
     public ResponseEntity<AuthResponseDTO> googleLogin(@RequestBody GoogleAuthDTO googleAuth) {

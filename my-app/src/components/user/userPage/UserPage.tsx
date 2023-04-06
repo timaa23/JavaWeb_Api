@@ -1,12 +1,39 @@
+import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/24/solid";
 import defaultUserImg from "../../../assets/img/default_user.png";
+import { IMAGES_FOLDER_MEDIUM } from "../../../constants/imgFolderPath";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
-
-const roles = ["admin", "user"];
+import { ChangeEvent } from "react";
+import { useActions } from "../../../hooks/useActions";
+import Loader from "../../common/loader/Loader";
 
 const UserPage = () => {
-  const { user } = useTypedSelector((store) => store.user);
+  const { user, loading } = useTypedSelector((store) => store.user);
+
+  const { ChangeUserImage } = useActions();
+
+  const onFileHandler = async (e: ChangeEvent<HTMLInputElement>) => {
+    const { token } = localStorage;
+    if (e.target.files) {
+      let file = e.target.files[0];
+
+      const fileType = file["type"];
+      const validImageTypes = ["image/jpg", "image/jpeg", "image/png"];
+
+      if (validImageTypes.includes(fileType)) {
+        try {
+          ChangeUserImage({ token: token, image: file });
+        } catch (error) {
+          console.error("Щось пішло не так, ", error);
+        }
+      } else {
+        console.error("Підтримуються тільки картинки!");
+      }
+    }
+  };
+
   return (
     <>
+      {loading && <Loader />}
       <section className="pt-16 bg-blueGray-50">
         <div className="w-full lg:w-4/12 px-4 mx-auto">
           <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg mt-16">
@@ -14,14 +41,31 @@ const UserPage = () => {
               <div className="flex flex-wrap justify-center">
                 <div className="w-full px-4 flex justify-center">
                   <div className="relative">
-                    <img
-                      alt="..."
-                      src={user?.image ? user.image : defaultUserImg}
-                      className="shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16"
-                      style={{ maxWidth: "150px" }}
+                    {}
+                    <label htmlFor="upload">
+                      <img
+                        id="pfp"
+                        alt="..."
+                        src={
+                          user?.image
+                            ? IMAGES_FOLDER_MEDIUM + user.image
+                            : defaultUserImg
+                        }
+                        className="transition shadow-xl rounded-full h-40 w-40 align-middle object-cover object-center border-none absolute -m-16 -ml-20 lg:-ml-16 hover:brightness-75 hover:cursor-pointer"
+                        style={{ maxWidth: "150px", maxHeight: "150px" }}
+                      />
+                    </label>
+                    <input
+                      type="file"
+                      id="upload"
+                      onChange={onFileHandler}
+                      className="hidden"
+                      name="file"
+                      accept=".jpg, .jpeg, .png"
                     />
                   </div>
                 </div>
+
                 <div className="w-full px-4 text-center mt-20">
                   <div className="flex justify-center py-4 lg:pt-4 pt-8">
                     <div className="p-3 text-center">
@@ -59,12 +103,12 @@ const UserPage = () => {
                     <p key={index}>{item}</p>
                   ))}
                 </div>
-                <div className="mb-2 text-blueGray-600 mt-10">
-                  <i className="fas fa-briefcase mr-2 text-lg text-blueGray-400"></i>
+                <div className="flex justify-center items-center mb-6 text-blueGray-600 mt-10">
+                  <EnvelopeIcon className="w-5 mr-3" />
                   {user?.email}
                 </div>
-                <div className="mb-2 text-blueGray-600">
-                  <i className="fas fa-university mr-2 text-lg text-blueGray-400"></i>
+                <div className="flex justify-center items-center mb-6 text-blueGray-600">
+                  <PhoneIcon className="w-5 mr-3" />
                   {user?.phone}
                 </div>
               </div>
@@ -74,12 +118,7 @@ const UserPage = () => {
                     <p className="mb-4 text-lg leading-relaxed text-blueGray-700">
                       *Опис*
                     </p>
-                    <a
-                      href="javascript:void(0);"
-                      className="font-normal text-pink-500"
-                    >
-                      Більше
-                    </a>
+                    <p className="font-normal text-pink-500">Більше</p>
                   </div>
                 </div>
               </div>

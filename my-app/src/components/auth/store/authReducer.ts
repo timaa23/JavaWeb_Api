@@ -31,6 +31,12 @@ const authReducer = (state = initialState, action: AuthActions): IAuthUser => {
         loading: true,
       };
     }
+    case AuthActionTypes.USER_CHANGE_IMAGE: {
+      return {
+        ...state,
+        loading: true,
+      };
+    }
 
     case AuthActionTypes.LOGIN_USER_SUCCES: {
       return {
@@ -54,6 +60,13 @@ const authReducer = (state = initialState, action: AuthActions): IAuthUser => {
       };
     }
     case AuthActionTypes.LOGOUT_USER_SUCCES: {
+      return {
+        ...state,
+        ...action.payload,
+        loading: false,
+      };
+    }
+    case AuthActionTypes.USER_CHANGE_IMAGE_SUCCES: {
       return {
         ...state,
         ...action.payload,
