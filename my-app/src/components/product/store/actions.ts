@@ -145,7 +145,7 @@ export const DeleteProduct =
         },
       });
 
-      return Promise.resolve(data);
+      return Promise.resolve("ok");
     } catch (error) {
       dispatch({
         type: ProductActionTypes.ERROR_REQUEST,

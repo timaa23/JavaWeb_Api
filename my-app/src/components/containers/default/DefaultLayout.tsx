@@ -7,7 +7,8 @@ const DefaultLayout = () => {
   const { category, product } = useTypedSelector((store) => store);
   return (
     <>
-      {(category.category.loading ||
+      {(category.categoryList.loading ||
+        category.category.loading ||
         product.productList.loading ||
         product.product.loading) && <Loader />}
       <DefaultHeader />

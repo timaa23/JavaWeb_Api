@@ -248,7 +248,7 @@ const AdminHeader = () => {
                       <Menu.Item>
                         {({ active }) => (
                           <Link
-                            to="/"
+                            to="/user"
                             className={classNames(
                               active
                                 ? "bg-gray-100 text-gray-900"

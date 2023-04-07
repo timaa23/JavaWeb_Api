@@ -4,7 +4,6 @@ import { IMAGES_FOLDER_MEDIUM } from "../../../constants/imgFolderPath";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
 import { ChangeEvent } from "react";
 import { useActions } from "../../../hooks/useActions";
-import Loader from "../../common/loader/Loader";
 
 const UserPage = () => {
   const { user, loading } = useTypedSelector((store) => store.user);
@@ -33,7 +32,6 @@ const UserPage = () => {
 
   return (
     <>
-      {loading && <Loader />}
       <section className="pt-16 bg-blueGray-50">
         <div className="w-full lg:w-4/12 px-4 mx-auto">
           <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg mt-16">
@@ -51,9 +49,15 @@ const UserPage = () => {
                             ? IMAGES_FOLDER_MEDIUM + user.image
                             : defaultUserImg
                         }
-                        className="transition shadow-xl rounded-full h-40 w-40 align-middle object-cover object-center border-none absolute -m-16 -ml-20 lg:-ml-16 hover:brightness-75 hover:cursor-pointer"
+                        className={
+                          (loading
+                            ? "brightness-75"
+                            : "hover:brightness-75 hover:cursor-pointer") +
+                          " transition shadow-xl rounded-full h-40 w-40 align-middle object-cover object-center border-none absolute -m-16 -ml-20 lg:-ml-16"
+                        }
                         style={{ maxWidth: "150px", maxHeight: "150px" }}
                       />
+                      {loading && miniLoading()}
                     </label>
                     <input
                       type="file"
@@ -131,3 +135,27 @@ const UserPage = () => {
 };
 
 export default UserPage;
+
+const miniLoading = () => (
+  <svg
+    className=" absolute"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z"
+      opacity=".25"
+    />
+    <path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z">
+      <animateTransform
+        attributeName="transform"
+        type="rotate"
+        dur="0.75s"
+        values="0 12 12;360 12 12"
+        repeatCount="indefinite"
+      />
+    </path>
+  </svg>
+);

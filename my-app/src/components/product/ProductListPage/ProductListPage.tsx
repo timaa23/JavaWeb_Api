@@ -1,11 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { IMAGES_FOLDER_HIGH } from "../../../constants/imgFolderPath";
 import { useActions } from "../../../hooks/useActions";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
 
 const ProductListPage = () => {
-  const { list } = useTypedSelector((store) => store.product.productList);
+  const [productCategory, setProductCategory] = useState("Продукти");
+
+  const { list, loading } = useTypedSelector(
+    (store) => store.product.productList
+  );
   const { category } = useTypedSelector((store) => store.category.category);
 
   const { id } = useParams();
@@ -25,6 +29,7 @@ const ProductListPage = () => {
       }
 
       const catResp: any = await GetCategory(categoryId);
+      setProductCategory(catResp.name);
       document.title = catResp.name + " - Магазин";
     } catch (error) {
       console.error("Щось пішло не так, ", error);
@@ -37,52 +42,78 @@ const ProductListPage = () => {
     LoadProducts(categoryId);
   }, []);
 
+  const whileLoading = () => {
+    const elements = [];
+    for (var i = 0; i < 5; i++) {
+      elements.push(
+        <div className="w-full" key={i}>
+          <div className="w-full h-80 mt-6 bg-gray-300 rounded-lg dark:bg-gray-600"></div>
+
+          <p className="w-24 h-2 mt-4 bg-gray-200 rounded-lg dark:bg-gray-700"></p>
+          <h1 className="w-56 h-2 mt-4 bg-gray-200 rounded-lg dark:bg-gray-700"></h1>
+        </div>
+      );
+    }
+    return (
+      <div className="animate-pulse">
+        <div className="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+          {elements}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-2xl py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
         <h2 className="text-2xl font-bold tracking-tight text-gray-900">
-          {category.name}
+          {productCategory}
         </h2>
-
-        {list.length !== 0 ? (
-          <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-            {list.map((product) => (
-              <div key={product.id} className="group relative">
-                <Link to={"/products/view/" + product.id}>
-                  <div className="transition duration-200 ease-out min-h-80 aspect-w-1 aspect-h-1 w-full overflow-hidden cursor-pointer rounded-md bg-gray-200 hover:opacity-75 lg:aspect-none lg:h-80">
-                    <img
-                      src={
-                        product.images.length > 0
-                          ? IMAGES_FOLDER_HIGH + product.images[0].name
-                          : ""
-                      }
-                      alt={product.name}
-                      className="h-full w-full object-cover object-center"
-                    />
-                  </div>
-                </Link>
-                <div className="mt-4 flex justify-between">
-                  <div>
-                    <h3 className="text-sm text-gray-700">
-                      <Link to={"/products/view/" + product.id}>
-                        {product.name}
-                      </Link>
-                    </h3>
-                    <p className="mt-1 text-sm text-gray-500">
-                      Description tmp
-                    </p>
-                  </div>
-                  <p className="text-sm font-medium text-gray-900">
-                    $ {product.price}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
+        {loading ? (
+          whileLoading()
         ) : (
-          <h3 className="text-4xl tracking-tight text-gray-900 py-64 text-center">
-            Продуктів не знайдено
-          </h3>
+          <>
+            {list.length !== 0 ? (
+              <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+                {list.map((product) => (
+                  <div key={product.id} className="group relative">
+                    <Link to={"/products/view/" + product.id}>
+                      <div className="transition duration-200 ease-out min-h-80 aspect-w-1 aspect-h-1 w-full overflow-hidden cursor-pointer rounded-md bg-gray-200 hover:opacity-75 lg:aspect-none lg:h-80">
+                        <img
+                          src={
+                            product.images.length > 0
+                              ? IMAGES_FOLDER_HIGH + product.images[0].name
+                              : ""
+                          }
+                          alt={product.name}
+                          className="h-full w-full object-cover object-center"
+                        />
+                      </div>
+                    </Link>
+                    <div className="mt-4 flex justify-between">
+                      <div>
+                        <h3 className="text-sm text-gray-700">
+                          <Link to={"/products/view/" + product.id}>
+                            {product.name}
+                          </Link>
+                        </h3>
+                        <p className="mt-1 text-sm text-gray-500">
+                          Description tmp
+                        </p>
+                      </div>
+                      <p className="text-sm font-medium text-gray-900">
+                        $ {product.price}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <h3 className="text-4xl tracking-tight text-gray-900 py-64 text-center">
+                Продуктів не знайдено
+              </h3>
+            )}
+          </>
         )}
       </div>
     </div>

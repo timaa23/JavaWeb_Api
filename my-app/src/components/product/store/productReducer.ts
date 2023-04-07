@@ -64,6 +64,7 @@ const productListReducer = (
     case ProductActionTypes.PRODUCT_DELETE_SUCCES: {
       return {
         ...state,
+        ...action.payload,
         loading: false,
       };
     }
