@@ -20,6 +20,10 @@ const productSize = {
 };
 const reviews = { href: "#", average: 4, totalCount: 117 };
 
+function classNames(...classes: any) {
+  return classes.filter(Boolean).join(" ");
+}
+
 const ProductPage = () => {
   const { product } = useTypedSelector((store) => store.product.product);
   const { category } = useTypedSelector((store) => store.category.category);
@@ -156,11 +160,13 @@ const ProductPage = () => {
                         value={size}
                         disabled={!size.inStock}
                         className={({ active }) =>
-                          (size.inStock
-                            ? "cursor-pointer bg-white text-gray-900 shadow-sm"
-                            : "cursor-not-allowed bg-gray-50 text-gray-200") +
-                          (active ? "ring-2 ring-indigo-500" : "") +
-                          "group relative flex items-center justify-center rounded-md border py-3 px-4 text-sm font-medium uppercase hover:bg-gray-50 focus:outline-none sm:flex-1 sm:py-6"
+                          classNames(
+                            size.inStock
+                              ? "cursor-pointer bg-white text-gray-900 shadow-sm"
+                              : "cursor-not-allowed bg-gray-50 text-gray-200",
+                            active ? "ring-2 ring-indigo-500" : "",
+                            "group relative flex items-center justify-center rounded-md border py-3 px-4 text-sm font-medium uppercase hover:bg-gray-50 focus:outline-none sm:flex-1 sm:py-6"
+                          )
                         }
                       >
                         {({ active, checked }) => (

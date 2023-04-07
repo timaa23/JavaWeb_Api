@@ -8,9 +8,7 @@ import DeleteModal from "../../../common/modal/DeleteModal";
 const AdminCategoryList = () => {
   const [productCategory, setProductCategory] = useState("Всі");
   const { list } = useTypedSelector((store) => store.product.productList);
-  const { category, categoryList } = useTypedSelector(
-    (store) => store.category
-  );
+  const { categoryList } = useTypedSelector((store) => store.category);
 
   const {
     GetAllProductList,
@@ -71,6 +69,10 @@ const AdminCategoryList = () => {
     } catch (error) {
       console.error("Щось пішло не так, ", error);
     }
+  };
+
+  const getCategoryNameById = (id: number) => {
+    return categoryList.list.find((value) => value.id === id)?.name;
   };
 
   return (
@@ -141,7 +143,7 @@ const AdminCategoryList = () => {
                     *short description*
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {item.categoryId}
+                    {getCategoryNameById(item.categoryId)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {"$" + item.price}
